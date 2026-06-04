@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeloBrowser – Dashboard</title>
+    <title>VeloBrowser – Dashboard Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -18,11 +18,11 @@
             height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease;
             overflow-x: hidden;
         }
 
-        /* Górny panel funkcyjny */
+        /* Górny panel */
         .top-bar {
             display: flex;
             align-items: center;
@@ -94,6 +94,7 @@
             max-width: 560px;
             position: relative;
             margin-bottom: 35px;
+            z-index: 100;
         }
 
         .search-box {
@@ -134,7 +135,7 @@
             display: none;
             flex-direction: column;
             overflow: hidden;
-            z-index: 10;
+            z-index: 110;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -142,6 +143,7 @@
             padding: 12px 20px;
             cursor: pointer;
             font-size: 15px;
+            text-align: left;
         }
 
         .suggestion-item:hover {
@@ -237,6 +239,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             padding: 6px 12px;
             border-radius: 6px;
+            text-align: left;
         }
 
         .history-text {
@@ -251,7 +254,7 @@
         }
         .history-del:hover { opacity: 1; }
 
-        /* Próbnik koloru w rogu */
+        /* Próbnik koloru */
         .picker-container {
             position: absolute;
             left: 20px;
@@ -283,17 +286,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: none;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none; /* Sterowane bezpiecznie przez JS */
             align-items: center;
             justify-content: center;
-            z-index: 1000;
+            z-index: 2000;
             backdrop-filter: blur(5px);
         }
 
         .cookie-window {
             background-color: #282a2d;
-            border: 4px solid #ff9400; /* Pomarańczowa ramka */
+            border: 4px solid #ff9400;
             border-radius: 20px;
             padding: 30px;
             width: 90%;
@@ -351,7 +354,7 @@
 
     <div class="top-bar">
         <div class="left-controls">
-            <div class="mascot-logo" onclick="alert('VeloBrowser v2.5 - Cheetah Edition')">🐆</div>
+            <div class="mascot-logo" onclick="alert('VeloBrowser – Cheetah Pro')">🐆</div>
             <div style="font-weight: bold; font-size: 14px;">VeloBrowser</div>
         </div>
         <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
@@ -391,7 +394,7 @@
             <div class="cookie-icon">🍪</div>
             <h2>Zgoda na pliki Cookies / Pamięć</h2>
             <p>VeloBrowser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię denerwującą kolegów oraz kolory tła.</p>
-            <div class="cookie-btns">
+            <div class="cookie-buttons">
                 <button class="c-btn c-accept" onclick="cookieDecision(true)">Akceptuję</button>
                 <button class="c-btn c-deny" onclick="cookieDecision(false)">Blokuję pamięć</button>
             </div>
@@ -399,20 +402,33 @@
     </div>
 
     <script>
+        // Flagi i bazy danych
         let storageAllowed = false;
         let incognito = false;
+        
         let tiles = [
-            { name: "Test", url: "https://wikipedia.org", icon: "#" },
-           
+            { name: "Discord", url: "https://discord.com", icon: "💬" },
+            { name: "YouTube", url: "https://youtube.com", icon: "📺" },
+            { name: "Minecraft Wiki", url: "https://minecraft.wiki", icon: "🧱" }
         ];
+        
         let historyData = [];
+        
+        // Bezpieczna baza podpowiedzi lokalnych (zamiast sypiącego się skryptu Google)
+        const staticSuggestions = ["discord", "youtube", "minecraft", "allegro", "facebook", "roblox", "gry online", "pogoda", "tłumacz google", "github"];
 
+        // GŁÓWNY START STRONY
         window.onload = function() {
-            const consent = localStorage.getItem('velo_consent');
-            if (consent === 'true') {
-                storageAllowed = true;
-                loadData();
-            } else {
+            try {
+                const consent = localStorage.getItem('velo_consent');
+                if (consent === 'true') {
+                    storageAllowed = true;
+                    loadData();
+                } else {
+                    document.getElementById('cookie-modal').style.display = 'flex';
+                }
+            } catch(e) {
+                // Jeśli localStorage jest całkowicie zablokowane w przeglądarce, aplikacja i tak ruszy
                 document.getElementById('cookie-modal').style.display = 'flex';
             }
             renderTiles();
@@ -423,4 +439,104 @@
             document.getElementById('cookie-modal').style.display = 'none';
             if (choice) {
                 storageAllowed = true;
-                localStorage.setItem('velo_consent', 'true');
+                try {
+                    localStorage.setItem('velo_consent', 'true');
+                    saveTiles();
+                } catch(e) {}
+            } else {
+                storageAllowed = false;
+                try { localStorage.clear(); } catch(e) {}
+            }
+        }
+
+        function loadData() {
+            if (!storageAllowed) return;
+            try {
+                const c = localStorage.getItem('velo_bg');
+                if (c) changeBg(c);
+                const t = localStorage.getItem('velo_tiles');
+                if (t) tiles = JSON.parse(t);
+                const h = localStorage.getItem('velo_hist');
+                if (h) historyData = JSON.parse(h);
+            } catch(e) {}
+        }
+
+        function changeBg(hex) {
+            document.getElementById('bg-layer').style.backgroundColor = hex;
+            if (storageAllowed && !incognito) {
+                try { localStorage.setItem('velo_bg', hex); } catch(e) {}
+            }
+        }
+
+        /* SKRÓTY (KAFELKI) */
+        function renderTiles() {
+            const grid = document.getElementById('shortcuts-grid');
+            grid.innerHTML = '';
+            tiles.forEach(tile => {
+                grid.innerHTML += `
+                    <a href="${tile.url}" target="_blank" class="tile">
+                        <div class="tile-icon">${tile.icon}</div>
+                        <div class="tile-label">${tile.name}</div>
+                    </a>
+                `;
+            });
+            grid.innerHTML += `
+                <div class="tile" onclick="addTile()">
+                    <div class="tile-icon">➕</div>
+                    <div class="tile-label">Dodaj</div>
+                </div>
+            `;
+        }
+
+        function addTile() {
+            const name = prompt("Podaj nazwę strony:");
+            if (!name) return;
+            let url = prompt("Podaj adres URL (np. allegro.pl):");
+            if (!url) return;
+            const icon = prompt("Podaj jedno emoji jako ikonę:") || "🌐";
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+            tiles.push({ name, url, icon });
+            renderTiles();
+            saveTiles();
+        }
+
+        function saveTiles() {
+            if (storageAllowed && !incognito) {
+                try { localStorage.setItem('velo_tiles', JSON.stringify(tiles)); } catch(e) {}
+            }
+        }
+
+        /* HISTORIA I WYSZUKIWANIE */
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('sug-box').style.display = 'none';
+                triggerSearch(e.target.value);
+            }
+        }
+
+        function triggerSearch(val) {
+            if (!val.trim()) return;
+            if (!incognito) {
+                historyData = historyData.filter(i => i !== val);
+                historyData.unshift(val);
+                if (historyData.length > 8) historyData.pop();
+                renderHistory();
+                if (storageAllowed) {
+                    try { localStorage.setItem('velo_hist', JSON.stringify(historyData)); } catch(e) {}
+                }
+            }
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(val)}`, '_blank');
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('hist-list');
+            list.innerHTML = '';
+            if (historyData.length === 0) {
+                list.innerHTML = '<div style="font-size:12px; opacity:0.4; text-align:center;">Brak wpisów</div>';
+                return;
+            }
+            historyData.forEach((item, idx) => {
+                list.innerHTML += `
+                    <div class="history-row">
+                        <span class="history-text" onclick="triggerSearch('${item}')">🔍 ${item}
