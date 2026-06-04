@@ -1,202 +1,426 @@
 <!DOCTYPE html>
-<html lang="pl" data-theme="dark">
+<html lang="pl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeloBrowser – Advanced Edition</title>
-    <link rel="stylesheet" href="style.css">
+    <title>VeloBrowser – Dashboard</title>
     <style>
-        /* Ekran startowy */
-        .home-screen {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #202124;
+            color: #f1f3f4;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Górny panel funkcyjny */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .left-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mascot-logo {
+            font-size: 24px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .incognito-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .incognito-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Główny kontener */
+        .main-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: calc(100% - 49px);
-            color: var(--text-color);
-            text-align: center;
             padding: 20px;
-            background-color: #202124;
-            transition: background-color 0.2s ease;
             position: relative;
-            overflow-y: auto;
         }
 
-        /* Logo i nazwa */
-        .brand-container {
+        .brand {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-        .big-mascot {
-            font-size: 70px;
-            animation: float 4s ease-in-out infinite;
-        }
-        .brand-title {
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            gap: 10px;
+            margin-bottom: 30px;
         }
 
-        /* Wyszukiwarka i kontener na podpowiedzi */
-        .search-container {
-            width: 100%;
-            max-width: 600px;
-            position: relative;
-            margin-bottom: 30px;
-            z-index: 50;
+        .brand h1 {
+            font-size: 42px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
-        .center-search-box input {
+
+        .brand-mascot {
+            font-size: 65px;
+        }
+
+        /* Wyszukiwarka i podpowiedzi */
+        .search-area {
             width: 100%;
-            padding: 14px 25px 14px 50px;
+            max-width: 560px;
+            position: relative;
+            margin-bottom: 35px;
+        }
+
+        .search-box {
+            width: 100%;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
             border-radius: 30px;
-            border: 1px solid var(--border-address);
-            background-color: var(--bg-toolbar);
-            color: var(--text-color);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: #303134;
+            color: white;
             font-size: 16px;
             outline: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        }
-        .center-search-box::before {
-            content: "🔍";
-            position: absolute;
-            left: 20px;
-            top: 25px;
-            transform: translateY(-50%);
-            font-size: 16px;
-            opacity: 0.7;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.2);
         }
 
-        /* Panel podpowiedzi z Google */
-        .suggestions-box {
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0.6;
+        }
+
+        .suggestions-list {
             position: absolute;
             top: 55px;
             left: 0;
             width: 100%;
-            background-color: var(--bg-toolbar);
-            border: 1px solid var(--border-address);
-            border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            background-color: #303134;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
             display: none;
             flex-direction: column;
-            text-align: left;
             overflow: hidden;
-        }
-        .suggestion-item {
-            padding: 10px 20px;
-            cursor: pointer;
-            color: var(--text-color);
-        }
-        .suggestion-item:hover {
-            background-color: var(--btn-hover);
+            z-index: 10;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        /* Siatka skrótów */
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .suggestion-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Skróty (Kafelki) */
         .shortcuts-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
-            max-width: 800px;
-            margin-bottom: 30px;
+            gap: 24px;
+            max-width: 650px;
+            margin-bottom: 40px;
         }
-        .shortcut-card {
+
+        .tile {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: var(--text-color);
-            width: 90px;
-            transition: transform 0.2s;
+            color: inherit;
+            width: 80px;
             cursor: pointer;
         }
-        .shortcut-card:hover {
-            transform: translateY(-5px);
-        }
-        .shortcut-icon {
+
+        .tile-icon {
             width: 60px;
             height: 60px;
-            background-color: var(--bg-toolbar);
+            background-color: #303134;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            border: 1px solid var(--border-address);
-        }
-        .shortcut-label {
-            font-size: 12px;
-            text-align: center;
-            width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.2s;
         }
 
-        /* Sekcja Historii */
-        .history-panel {
+        .tile:hover .tile-icon {
+            transform: translateY(-4px);
+            background-color: #3c4043;
+        }
+
+        .tile-label {
+            font-size: 12px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             width: 100%;
-            max-width: 450px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 15px;
+            opacity: 0.9;
+        }
+
+        /* Panel Historii */
+        .history-box {
+            width: 100%;
+            max-width: 400px;
+            background-color: rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
             padding: 15px;
-            border: 1px solid var(--border-address);
-            text-align: left;
-            margin-bottom: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .history-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .history-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 150px;
-            overflow-y: auto;
-        }
-        .history-item {
+
+        .history-header {
             display: flex;
             justify-content: space-between;
             font-size: 13px;
-            background: var(--bg-toolbar);
-            padding: 6px 12px;
-            border-radius: 8px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 0.7;
         }
-        .delete-hist-btn {
-            cursor: pointer;
-            opacity: 0.6;
-        }
-        .delete-hist-btn:hover { opacity: 1; }
 
-        /* Przyciski w rogach */
-        .color-picker-container {
+        .history-clear {
+            cursor: pointer;
+            color: #ff9400;
+        }
+
+        .history-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .history-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .history-text {
+            cursor: pointer;
+        }
+
+        .history-text:hover { text-decoration: underline; }
+
+        .history-del {
+            cursor: pointer;
+            opacity: 0.5;
+        }
+        .history-del:hover { opacity: 1; }
+
+        /* Próbnik koloru w rogu */
+        .picker-container {
             position: absolute;
             left: 20px;
             bottom: 20px;
+            background-color: #303134;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: var(--bg-toolbar);
-            border-radius: 50%;
-            border: 1px solid var(--border-address);
-            width: 44px;
-            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .custom-color-input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        /* NOWOŚĆ: Wielkie, wyskakujące okienko Cookies na środku z pomarańczową ramką */
-        .cookie-overlay {
+        .picker-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* DUŻE POMARAŃCZOWE OKNO COOKIES */
+        .cookie-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .cookie-window {
+            background-color: #282a2d;
+            border: 4px solid #ff9400; /* Pomarańczowa ramka */
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .cookie-icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .cookie-window h2 {
+            color: #ff9400;
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .cookie-window p {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            opacity: 0.85;
+        }
+
+        .cookie-btns {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .c-btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .c-accept { background-color: #ff9400; color: #1c1a1a; }
+        .c-deny { background-color: #5f6368; color: white; }
+
+        /* Tryb Incognito */
+        body.incognito-mode {
+            background-color: #160f22 !important;
+        }
+        body.incognito-mode .top-bar {
+            background-color: #0e0917;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="left-controls">
+            <div class="mascot-logo" onclick="alert('VeloBrowser v2.5 - Cheetah Edition')">🐆</div>
+            <div style="font-weight: bold; font-size: 14px;">VeloBrowser</div>
+        </div>
+        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
+    </div>
+
+    <div class="main-content" id="bg-layer">
+        <div class="brand">
+            <div class="brand-mascot">🐆</div>
+            <h1 id="brand-text">VeloBrowser</h1>
+        </div>
+
+        <div class="search-area">
+            <div class="search-box">
+                <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" oninput="getSuggestions(this.value)" autocomplete="off">
+            </div>
+            <div class="suggestions-list" id="sug-box"></div>
+        </div>
+
+        <div class="shortcuts-grid" id="shortcuts-grid"></div>
+
+        <div class="history-box">
+            <div class="history-header">
+                <span>🕒 HISTORIA WYSZUKIWANIA</span>
+                <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
+            </div>
+            <div class="history-items" id="hist-list"></div>
+        </div>
+
+        <div class="picker-container">
+            🎨
+            <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
+        </div>
+    </div>
+
+    <div class="cookie-backdrop" id="cookie-modal">
+        <div class="cookie-window">
+            <div class="cookie-icon">🍪</div>
+            <h2>Zgoda na pliki Cookies / Pamięć</h2>
+            <p>VeloBrowser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię denerwującą kolegów oraz kolory tła.</p>
+            <div class="cookie-btns">
+                <button class="c-btn c-accept" onclick="cookieDecision(true)">Akceptuję</button>
+                <button class="c-btn c-deny" onclick="cookieDecision(false)">Blokuję pamięć</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let storageAllowed = false;
+        let incognito = false;
+        let tiles = [
+            { name: "Test", url: "https://wikipedia.org", icon: "#" },
+           
+        ];
+        let historyData = [];
+
+        window.onload = function() {
+            const consent = localStorage.getItem('velo_consent');
+            if (consent === 'true') {
+                storageAllowed = true;
+                loadData();
+            } else {
+                document.getElementById('cookie-modal').style.display = 'flex';
+            }
+            renderTiles();
+            renderHistory();
+        };
+
+        function cookieDecision(choice) {
+            document.getElementById('cookie-modal').style.display = 'none';
+            if (choice) {
+                storageAllowed = true;
+                localStorage.setItem('velo_consent', 'true');
