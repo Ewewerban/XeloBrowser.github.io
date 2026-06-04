@@ -5,36 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VeloBrowser – Web Edition</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Dodatkowe style specjalnie dla ekranu startowego */
+        .home-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: calc(100% - 49px);
+            color: var(--text-color);
+            text-align: center;
+            padding: 20px;
+        }
+        .big-mascot {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .home-screen h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .home-screen p {
+            font-size: 16px;
+            color: #8ab4f8;
+            margin-bottom: 30px;
+        }
+        .search-info {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px 25px;
+            border-radius: 12px;
+            max-width: 500px;
+            font-size: 14px;
+            line-height: 1.5;
+            border: 1px solid var(--border-address);
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
 </head>
 <body>
 
     <div class="toolbar">
         <div class="mascot" title="Jestem Velo, maskotka przeglądarki!" onclick="aboutVelo()">🐆</div>
         
-        <button class="btn" onclick="goBack()">←</button>
-        <button class="btn" onclick="goForward()">→</button>
-        <button class="btn" onclick="reloadPage()">↻</button>
         <button class="btn" onclick="goHome()">⌂</button>
         
-        <input type="text" id="url-input" class="address-bar" value="https://www.bing.com" onkeydown="checkEnter(event)">
+        <input type="text" id="url-input" class="address-bar" placeholder="Wpisz czego szukasz w Google lub podaj adres URL..." onkeydown="checkEnter(event)">
         
+        <button class="btn" onclick="navigate()" title="Wyszukaj / Przejdź">🔍</button>
         <button class="btn" onclick="toggleTheme()" title="Zmień motyw">💡</button>
     </div>
 
-    <iframe id="web-frame" class="browser-content" src="https://www.bing.com"></iframe>
+    <div class="home-screen">
+        <div class="big-mascot">🐆</div>
+        <h1>VeloBrowser</h1>
+        <p>Szybkie wyszukiwanie oparte o silnik Google</p>
+        
+        <div class="search-info">
+            <strong>Jak używać?</strong><br>
+            Wpisz dowolne hasło na pasku u góry i naciśnij <strong>Enter</strong> lub kliknij ikonę lupy 🔍. VeloBrowser błyskawicznie przekieruje Cię do bezpiecznego okna wyszukiwania Google!
+        </div>
+    </div>
 
     <script>
-        const frame = document.getElementById('web-frame');
         const urlInput = document.getElementById('url-input');
-        const homeUrl = "https://www.bing.com";
 
         function navigate() {
-            let url = urlInput.value.trim();
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
+            let query = urlInput.value.trim();
+            if (query === "") return;
+
+            // Sprawdzamy, czy użytkownik wpisał adres strony (np. zawierający kropkę i brak spacji)
+            const isUrl = query.includes('.') && !query.includes(' ');
+
+            if (isUrl) {
+                // Jeśli to adres, upewniamy się, że ma http/https i otwieramy stronę
+                if (!query.startsWith('http://') && !query.startsWith('https://')) {
+                    query = 'https://' + query;
+                }
+                window.open(query, '_blank');
+            } else {
+                // Jeśli to zwykły tekst, wyszukujemy go w Google!
+                const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+                window.open(googleSearchUrl, '_blank');
             }
-            urlInput.value = url;
-            frame.src = url;
+            
+            // Po wyszukaniu czyścimy pasek dla wygody
+            urlInput.value = "";
         }
 
         function checkEnter(event) {
@@ -44,28 +105,19 @@
         }
 
         function goHome() {
-            urlInput.value = homeUrl;
-            frame.src = homeUrl;
+            urlInput.value = "";
+            urlInput.focus();
         }
 
-        function reloadPage() {
-            frame.src = frame.src;
-        }
-
-        // Funkcja przełączania motywów (Jasny / Ciemny)
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
         }
 
-        // Kliknięcie w geparda wyświetla powitanie
         function aboutVelo() {
-            alert("Cześć! Jestem Velo, maskotka tej przeglądarki. Szybki jak gepard!");
+            alert("Cześć! Jestem Velo! Wpisz coś w pasek powyżej, a pomogę Ci znaleźć to w Google!");
         }
-
-        function goBack() { window.history.back(); }
-        function goForward() { window.history.forward(); }
     </script>
 </body>
 </html>
