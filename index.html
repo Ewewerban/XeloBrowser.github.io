@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XeloBrowser</title>
+    <title>Xelo Browser – Dashboard Pro</title>
     <style>
         * {
             box-sizing: border-box;
@@ -287,7 +287,7 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            display: none; /* Sterowane bezpiecznie przez JS */
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 2000;
@@ -323,7 +323,7 @@
             opacity: 0.85;
         }
 
-        .cookie-btns {
+        .cookie-buttons {
             display: flex;
             gap: 15px;
             justify-content: center;
@@ -354,21 +354,21 @@
 
     <div class="top-bar">
         <div class="left-controls">
-            <div class="mascot-logo" onclick="alert('Xelo')">🐆</div>
-            <div style="font-weight: bold; font-size: 14px;">VeloBrowser</div>
+            <div class="mascot-logo" onclick="alert('Xelo Browser – Cheetah Pro')">🐆</div>
+            <div style="font-weight: bold; font-size: 14px;">Xelo Browser</div>
         </div>
-        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Incognito</button>
+        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
     </div>
 
     <div class="main-content" id="bg-layer">
         <div class="brand">
             <div class="brand-mascot">🐆</div>
-            <h1 id="brand-text">XeloBrowser</h1>
+            <h1 id="brand-text">Xelo Browser</h1>
         </div>
 
         <div class="search-area">
             <div class="search-box">
-                <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" oninput="getSuggestions(this.value)" autocomplete="off">
+                <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" oninput="getOnlineSuggestions(this.value)" autocomplete="off">
             </div>
             <div class="suggestions-list" id="sug-box"></div>
         </div>
@@ -393,7 +393,7 @@
         <div class="cookie-window">
             <div class="cookie-icon">🍪</div>
             <h2>Zgoda na pliki Cookies / Pamięć</h2>
-            <p>VeloBrowser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię oraz kolory tła.</p>
+            <p>Xelo Browser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię denerwującą kolegów oraz kolory tła.</p>
             <div class="cookie-buttons">
                 <button class="c-btn c-accept" onclick="cookieDecision(true)">Akceptuję</button>
                 <button class="c-btn c-deny" onclick="cookieDecision(false)">Blokuję pamięć</button>
@@ -402,21 +402,18 @@
     </div>
 
     <script>
-        // Flagi i bazy danych
         let storageAllowed = false;
         let incognito = false;
         
         let tiles = [
             { name: "Discord", url: "https://discord.com", icon: "💬" },
-           
+            { name: "YouTube", url: "https://youtube.com", icon: "📺" },
+            { name: "Minecraft Wiki", url: "https://minecraft.wiki", icon: "🧱" }
         ];
         
         let historyData = [];
-        
-        // Bezpieczna baza podpowiedzi lokalnych (zamiast sypiącego się skryptu Google)
         const staticSuggestions = ["discord", "youtube", "minecraft", "allegro", "facebook", "roblox", "gry online", "pogoda", "tłumacz google", "github"];
 
-        // GŁÓWNY START STRONY
         window.onload = function() {
             try {
                 const consent = localStorage.getItem('velo_consent');
@@ -427,7 +424,6 @@
                     document.getElementById('cookie-modal').style.display = 'flex';
                 }
             } catch(e) {
-                // Jeśli localStorage jest całkowicie zablokowane w przeglądarce, aplikacja i tak ruszy
                 document.getElementById('cookie-modal').style.display = 'flex';
             }
             renderTiles();
@@ -467,7 +463,7 @@
             }
         }
 
-        /* SKRÓTY (KAFELKI) */
+        /* KAFELKI */
         function renderTiles() {
             const grid = document.getElementById('shortcuts-grid');
             grid.innerHTML = '';
@@ -538,4 +534,118 @@
             historyData.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="history-row">
-                        <span class="history-text" onclick="triggerSearch('${item}')">🔍 ${item}
+                        <span class="history-text" onclick="triggerSearch('${item}')">🔍 ${item}</span>
+                        <span class="history-del" onclick="delHist(${idx})">❌</span>
+                    </div>
+                `;
+            });
+        }
+
+        function delHist(idx) {
+            historyData.splice(idx, 1);
+            renderHistory();
+            if (storageAllowed) {
+                try { localStorage.setItem('velo_hist', JSON.stringify(historyData)); } catch(e) {}
+            }
+        }
+
+        function clearHistory() {
+            historyData = [];
+            renderHistory();
+            if (storageAllowed) {
+                try { localStorage.removeItem('velo_hist'); } catch(e) {}
+            }
+        }
+
+        /* NOWE: PRAWDZIWE PODPOWIEDZI Z INTERNETU (GOOGLE) */
+        function getOnlineSuggestions(val) {
+            const box = document.getElementById('sug-box');
+            if (!val.trim()) { box.style.display = 'none'; return; }
+
+            // Usuwamy stary skrypt podpowiedzi, aby nie śmiecić w pamięci strony
+            const oldScript = document.getElementById('google-suggest-script');
+            if (oldScript) oldScript.remove();
+
+            // Tworzymy nowe, dynamiczne zapytanie do serwera Google
+            const script = document.createElement('script');
+            script.id = 'google-suggest-script';
+            // Parametr &callback=processSuggestions przekazuje dane prosto do naszego kodu internetowego
+            script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(val)}&callback=processSuggestions&_=${Date.now()}`;
+            
+            // W razie braku internetu lub błędu sieci, ładujemy awaryjnie lokalną bazę po 800ms
+            const networkTimeout = setTimeout(() => {
+                fallbackLocalSuggestions(val);
+            }, 800);
+
+            window.currentTimeout = networkTimeout;
+            document.body.appendChild(script);
+        }
+
+        // Ta funkcja odbiera prawdziwe dane przysłane z internetu od Google
+        function processSuggestions(data) {
+            clearTimeout(window.currentTimeout); // Internet odpowiedział na czas!
+            const box = document.getElementById('sug-box');
+            box.innerHTML = '';
+            
+            const onlineMatches = data[1] || [];
+            if (onlineMatches.length === 0) { box.style.display = 'none'; return; }
+
+            // Wyświetlamy 5 najlepszych wyników prosto z wyszukiwarki Google
+            onlineMatches.slice(0, 5).forEach(txt => {
+                const d = document.createElement('div');
+                d.className = 'suggestion-item';
+                d.innerText = txt;
+                d.onclick = () => {
+                    document.getElementById('search-in').value = txt;
+                    box.style.display = 'none';
+                    triggerSearch(txt);
+                };
+                box.appendChild(d);
+            });
+            box.style.display = 'flex';
+        }
+
+        // Funkcja awaryjna (gdyby Google odrzuciło połączenie)
+        function fallbackLocalSuggestions(val) {
+            const box = document.getElementById('sug-box');
+            const query = val.toLowerCase();
+            const matches = [...new Set([...historyData, ...staticSuggestions])]
+                .filter(item => item.toLowerCase().includes(query))
+                .slice(0, 5);
+
+            if (matches.length === 0) { box.style.display = 'none'; return; }
+            box.innerHTML = '';
+            matches.forEach(txt => {
+                const d = document.createElement('div');
+                d.className = 'suggestion-item';
+                d.innerText = txt;
+                d.onclick = () => {
+                    document.getElementById('search-in').value = txt;
+                    box.style.display = 'none';
+                    triggerSearch(txt);
+                };
+                box.appendChild(d);
+            });
+            box.style.display = 'flex';
+        }
+
+        /* INCOGNITO */
+        function toggleIncognito() {
+            incognito = !incognito;
+            document.body.classList.toggle('incognito-mode', incognito);
+            const btn = document.getElementById('incog-toggle');
+            const title = document.getElementById('brand-text');
+
+            if (incognito) {
+                btn.innerText = "🕵️ Tryb Incognito: WŁĄCZONY";
+                btn.style.borderColor = '#ff9400';
+                title.innerText = "Xelo Browser (Incognito)";
+            } else {
+                btn.innerText = "🕵️ Tryb Incognito";
+                btn.style.borderColor = '';
+                title.innerText = "Xelo Browser";
+            }
+        }
+    </script>
+</body>
+</html>
