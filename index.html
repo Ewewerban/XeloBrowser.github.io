@@ -354,16 +354,16 @@
 
     <div class="top-bar">
         <div class="left-controls">
-            <div class="mascot-logo" onclick="alert('VeloBrowser – Cheetah Pro')">🐆</div>
+            <div class="mascot-logo" onclick="alert('Xelo')">🐆</div>
             <div style="font-weight: bold; font-size: 14px;">VeloBrowser</div>
         </div>
-        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
+        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Incognito</button>
     </div>
 
     <div class="main-content" id="bg-layer">
         <div class="brand">
             <div class="brand-mascot">🐆</div>
-            <h1 id="brand-text">VeloBrowser</h1>
+            <h1 id="brand-text">XeloBrowser</h1>
         </div>
 
         <div class="search-area">
@@ -393,7 +393,7 @@
         <div class="cookie-window">
             <div class="cookie-icon">🍪</div>
             <h2>Zgoda na pliki Cookies / Pamięć</h2>
-            <p>VeloBrowser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię denerwującą kolegów oraz kolory tła.</p>
+            <p>VeloBrowser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię oraz kolory tła.</p>
             <div class="cookie-buttons">
                 <button class="c-btn c-accept" onclick="cookieDecision(true)">Akceptuję</button>
                 <button class="c-btn c-deny" onclick="cookieDecision(false)">Blokuję pamięć</button>
@@ -408,8 +408,7 @@
         
         let tiles = [
             { name: "Discord", url: "https://discord.com", icon: "💬" },
-            { name: "YouTube", url: "https://youtube.com", icon: "📺" },
-            { name: "Minecraft Wiki", url: "https://minecraft.wiki", icon: "🧱" }
+           
         ];
         
         let historyData = [];
