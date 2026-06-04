@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeloBrowser – Web Edition</title>
+    <title>VeloBrowser – Cheetah Edition</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Ekran startowy w stylu Firefoxa */
+        /* Ekran startowy */
         .home-screen {
             display: flex;
             flex-direction: column;
@@ -16,9 +16,12 @@
             color: var(--text-color);
             text-align: center;
             padding: 20px;
+            /* Domyślny kolor tła, który będzie zmieniany przez Color Picker */
+            background-color: #202124;
+            transition: background-color 0.2s ease;
         }
 
-        /* Logo i nazwa na środku */
+        /* Logo i nazwa na środku (Gepard) */
         .brand-container {
             display: flex;
             align-items: center;
@@ -26,13 +29,14 @@
             margin-bottom: 25px;
         }
         .big-mascot {
-            font-size: 65px;
+            font-size: 70px;
             animation: float 4s ease-in-out infinite;
         }
         .brand-title {
             font-size: 48px;
             font-weight: 700;
             letter-spacing: -1px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         /* Środkowy duży pasek wyszukiwania */
@@ -51,12 +55,12 @@
             color: var(--text-color);
             font-size: 16px;
             outline: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             transition: all 0.3s;
         }
         .center-search-box input:focus {
             border-color: #8ab4f8;
-            box-shadow: 0 4px 20px rgba(138, 180, 248, 0.2);
+            box-shadow: 0 4px 20px rgba(138, 180, 248, 0.4);
         }
         .center-search-box::before {
             content: "🔍";
@@ -68,7 +72,7 @@
             opacity: 0.7;
         }
 
-        /* Siatka skrótów (Kafelki do stron) */
+        /* Kafelki do stron */
         .shortcuts-grid {
             display: flex;
             flex-wrap: wrap;
@@ -88,7 +92,6 @@
         .shortcut-card:hover {
             transform: translateY(-5px);
         }
-        /* Kwadratowa ikona */
         .shortcut-icon {
             width: 60px;
             height: 60px;
@@ -99,7 +102,7 @@
             justify-content: center;
             font-size: 28px;
             margin-bottom: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
             border: 1px solid var(--border-address);
         }
         .shortcut-label {
@@ -109,6 +112,22 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+        }
+
+        /* Ukryty, sprytny przycisk wyboru koloru, schowany pod ikoną palety */
+        .color-picker-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .custom-color-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
         }
 
         @keyframes float {
@@ -130,10 +149,16 @@
         
         <input type="text" id="top-url-input" class="address-bar" placeholder="Wyszukaj w Google lub wpisz adres..." onkeydown="checkEnter(event, 'top-url-input')">
         <button class="btn" onclick="navigate('top-url-input')" title="Szukaj">🔍</button>
-        <button class="btn" onclick="toggleTheme()" title="Zmień motyw">💡</button>
+        
+        <div class="color-picker-container" title="Zmień kolor tapety">
+            <button class="btn">🎨</button>
+            <input type="color" id="wallpaper-color-picker" class="custom-color-input" value="#202124" oninput="changeWallpaperColor(this.value)">
+        </div>
+
+        <button class="btn" onclick="toggleTheme()" title="Zmień motyw paska">💡</button>
     </div>
 
-    <div class="home-screen">
+    <div class="home-screen" id="home-bg">
         
         <div class="brand-container">
             <div class="big-mascot">🐆</div>
@@ -145,76 +170,6 @@
         </div>
 
         <div class="shortcuts-grid">
-            
             <a href="https://discord.com" class="shortcut-card">
                 <div class="shortcut-icon">💬</div>
                 <div class="shortcut-label">Discord</div>
-            </a>
-
-            <a href="https://minecraft.wiki" class="shortcut-card">
-                <div class="shortcut-icon">🧱</div>
-                <div class="shortcut-label">Minecraft Wiki</div>
-            </a>
-
-            <a href="https://allegro.pl" class="shortcut-card">
-                <div class="shortcut-icon">🟠</div>
-                <div class="shortcut-label">Allegro</div>
-            </a>
-
-            <a href="https://www.youtube.com" class="shortcut-card">
-                <div class="shortcut-icon">📺</div>
-                <div class="shortcut-label">YouTube</div>
-            </a>
-
-            <a href="https://github.com" class="shortcut-card">
-                <div class="shortcut-icon">🐙</div>
-                <div class="shortcut-label">GitHub</div>
-            </a>
-
-        </div>
-    </div>
-
-    <script>
-        function navigate(inputId) {
-            const input = document.getElementById(inputId);
-            let query = input.value.trim();
-            if (query === "") return;
-
-            const isUrl = query.includes('.') && !query.includes(' ');
-
-            if (isUrl) {
-                if (!query.startsWith('http://') && !query.startsWith('https://')) {
-                    query = 'https://' + query;
-                }
-                // ZMIANA: Otwieramy w tym samym oknie, Firefox tego nie zablokuje!
-                window.location.href = query;
-            } else {
-                const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
-                // ZMIANA: Przekierowanie do Google w tym samym oknie
-                window.location.href = googleSearchUrl;
-            }
-        }
-
-        function checkEnter(event, inputId) {
-            if (event.key === 'Enter') {
-                navigate(inputId);
-            }
-        }
-
-        function goHome() {
-            // Szybki powrót do ekranu startowego VeloBrowser
-            window.location.href = "index.html";
-        }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-        }
-
-        function aboutVelo() {
-            alert("VeloBrowser – stworzony przez Ewewerban!");
-        }
-    </script>
-</body>
-</html>
