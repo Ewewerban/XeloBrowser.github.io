@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeloBrowser – Cheetah Edition</title>
+    <title>VeloBrowser – Advanced Edition</title>
     <link rel="stylesheet" href="style.css">
     <style>
         /* Ekran startowy */
@@ -19,9 +19,10 @@
             background-color: #202124;
             transition: background-color 0.2s ease;
             position: relative;
+            overflow-y: auto;
         }
 
-        /* Logo i nazwa na środku (Gepard) */
+        /* Logo i nazwa */
         .brand-container {
             display: flex;
             align-items: center;
@@ -39,12 +40,13 @@
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
-        /* Środkowy duży pasek wyszukiwania */
-        .center-search-box {
+        /* Wyszukiwarka i kontener na podpowiedzi */
+        .search-container {
             width: 100%;
             max-width: 600px;
             position: relative;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            z-index: 50;
         }
         .center-search-box input {
             width: 100%;
@@ -56,29 +58,49 @@
             font-size: 16px;
             outline: none;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-        }
-        .center-search-box input:focus {
-            border-color: #8ab4f8;
-            box-shadow: 0 4px 20px rgba(138, 180, 248, 0.4);
         }
         .center-search-box::before {
             content: "🔍";
             position: absolute;
             left: 20px;
-            top: 50%;
+            top: 25px;
             transform: translateY(-50%);
             font-size: 16px;
             opacity: 0.7;
         }
 
-        /* Kafelki do stron */
+        /* Panel podpowiedzi z Google */
+        .suggestions-box {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            background-color: var(--bg-toolbar);
+            border: 1px solid var(--border-address);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: column;
+            text-align: left;
+            overflow: hidden;
+        }
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        .suggestion-item:hover {
+            background-color: var(--btn-hover);
+        }
+
+        /* Siatka skrótów */
         .shortcuts-grid {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
             max-width: 800px;
+            margin-bottom: 30px;
         }
         .shortcut-card {
             display: flex;
@@ -88,6 +110,7 @@
             color: var(--text-color);
             width: 90px;
             transition: transform 0.2s;
+            cursor: pointer;
         }
         .shortcut-card:hover {
             transform: translateY(-5px);
@@ -112,10 +135,48 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.6);
         }
 
-        /* NOWOŚĆ: Paleta przeniesiona w LEWY DOLNY RÓG */
+        /* Sekcja Historii */
+        .history-panel {
+            width: 100%;
+            max-width: 450px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 15px;
+            border: 1px solid var(--border-address);
+            text-align: left;
+            margin-bottom: 50px;
+        }
+        .history-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            background: var(--bg-toolbar);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+        .delete-hist-btn {
+            cursor: pointer;
+            opacity: 0.6;
+        }
+        .delete-hist-btn:hover { opacity: 1; }
+
+        /* Przyciski w rogach */
         .color-picker-container {
             position: absolute;
             left: 20px;
@@ -125,28 +186,13 @@
             justify-content: center;
             background-color: var(--bg-toolbar);
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             border: 1px solid var(--border-address);
             width: 44px;
             height: 44px;
-            transition: transform 0.2s;
         }
-        .color-picker-container:hover {
-            transform: scale(1.1);
-        }
-        .custom-color-input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        .color-picker-btn {
-            font-size: 22px;
-            pointer-events: none; /* pozwala kliknąć pod spód w input */
-        }
+        .custom-color-input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        /* NOWOŚĆ: Pasek informacyjny o plikach Cookies / Przechowywaniu danych */
+        /* Baner cookie */
         .cookie-banner {
             position: fixed;
             bottom: 0;
@@ -155,27 +201,31 @@
             background-color: #2f3136;
             color: #e8eaed;
             padding: 15px 20px;
-            display: flex;
+            display: none;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.4);
             border-top: 1px solid #5f6368;
             z-index: 100;
             font-size: 14px;
-            display: none; /* Domyślnie ukryty, pokaże się przez JS */
         }
+        .cookie-buttons { display: flex; gap: 10px; }
         .cookie-btn {
-            background-color: #8ab4f8;
-            color: #202124;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 15px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.2s;
         }
-        .cookie-btn:hover {
-            background-color: #aecbfa;
+        .btn-accept { background-color: #8ab4f8; color: #202124; }
+        .btn-decline { background-color: #5f6368; color: white; }
+
+        /* Styl trybu Incognito */
+        body[data-incognito="true"] .home-screen {
+            background-color: #1c122c !important;
+        }
+        body[data-incognito="true"] .toolbar {
+            background-color: #130a22 !important;
         }
 
         @keyframes float {
@@ -187,81 +237,235 @@
 </head>
 <body>
 
-    <div class="toolbar">
+    <div class="toolbar" id="main-toolbar">
         <div class="mascot" title="VeloBrowser" onclick="aboutVelo()">🐆</div>
-        
         <button class="btn" onclick="window.history.back()" title="Wstecz">←</button>
         <button class="btn" onclick="window.history.forward()" title="Dalej">→</button>
-        <button class="btn" onclick="location.reload()" title="Odśwież tę kartę">↻</button>
+        <button class="btn" onclick="location.reload()" title="Odśwież">↻</button>
         <button class="btn" onclick="goHome()" title="Strona główna">⌂</button>
         
-        <input type="text" id="top-url-input" class="address-bar" placeholder="Wyszukaj w Google lub wpisz adres..." onkeydown="checkEnter(event, 'top-url-input')">
-        <button class="btn" onclick="navigate('top-url-input')" title="Szukaj">🔍</button>
+        <input type="text" id="top-url-input" class="address-bar" placeholder="Szukaj w Google..." onkeydown="checkEnter(event, 'top-url-input')">
+        
+        <button class="btn" id="incognito-btn" onclick="toggleIncognito()" title="Tryb Incognito">🕵️</button>
         <button class="btn" onclick="toggleTheme()" title="Zmień motyw paska">💡</button>
     </div>
 
     <div class="home-screen" id="home-bg">
-        
         <div class="brand-container">
             <div class="big-mascot">🐆</div>
-            <div class="brand-title">VeloBrowser</div>
+            <div class="brand-title" id="main-title">VeloBrowser</div>
         </div>
 
-        <div class="center-search-box">
-            <input type="text" id="center-url-input" placeholder="Wprowadź adres lub szukaj w Google" onkeydown="checkEnter(event, 'center-url-input')" autofocus>
+        <div class="search-container">
+            <div class="center-search-box">
+                <input type="text" id="center-url-input" placeholder="Wprowadź adres lub szukaj w Google" onkeydown="checkEnter(event, 'center-url-input')" oninput="fetchSuggestions(this.value)" autofocus autocomplete="off">
+            </div>
+            <div id="suggestions" class="suggestions-box"></div>
         </div>
 
-        <div class="shortcuts-grid">
-            <a href="https://discord.com" class="shortcut-card">
-                <div class="shortcut-icon">💬</div>
-                <div class="shortcut-label">Discord</div>
-            </a>
-            <a href="https://minecraft.wiki" class="shortcut-card">
-                <div class="shortcut-icon">🧱</div>
-                <div class="shortcut-label">Minecraft Wiki</div>
-            </a>
-            <a href="https://allegro.pl" class="shortcut-card">
-                <div class="shortcut-icon">🟠</div>
-                <div class="shortcut-label">Allegro</div>
-            </a>
-            <a href="https://www.youtube.com" class="shortcut-card">
-                <div class="shortcut-icon">📺</div>
-                <div class="shortcut-label">YouTube</div>
-            </a>
-            <a href="https://github.com" class="shortcut-card">
-                <div class="shortcut-icon">🐙</div>
-                <div class="shortcut-label">GitHub</div>
-            </a>
+        <div class="shortcuts-grid" id="shortcuts-container"></div>
+
+        <div class="history-panel">
+            <div class="history-title">
+                <span>🕒 Ostatnio wyszukiwane (Historia)</span>
+                <span class="delete-hist-btn" onclick="clearAllHistory()">Wyczyść wszystko</span>
+            </div>
+            <div class="history-list" id="history-container"></div>
         </div>
 
         <div class="color-picker-container" title="Zmień kolor tła">
-            <div class="color-picker-btn">🎨</div>
+            <div style="font-size:22px;">🎨</div>
             <input type="color" id="wallpaper-color-picker" class="custom-color-input" value="#202124" oninput="changeWallpaperColor(this.value)">
         </div>
-
     </div>
 
     <div id="cookie-bar" class="cookie-banner">
-        <span>Ta strona używa pamięci przeglądarki (Local Storage/Cookies), aby zapamiętać Twój spersonalizowany kolor tła.</span>
-        <button class="cookie-btn" onclick="acceptCookies()">Rozumiem</button>
+        <span>VeloBrowser używa pamięci LocalStorage do zapamiętywania Twoich skrótów, historii i koloru tła. Zgadzasz się?</span>
+        <div class="cookie-buttons">
+            <button class="cookie-btn btn-accept" onclick="setCookieChoice(true)">Akceptuję</button>
+            <button class="cookie-btn btn-decline" onclick="setCookieChoice(false)">Blokuję pamięć</button>
+        </div>
     </div>
 
     <script>
-        // Sprawdzamy zapisane ustawienia zaraz po wczytaniu strony
-        window.onload = function() {
-            // Wczytaj zapisany kolor tła
-            const savedColor = localStorage.getItem('velo_bg_color');
-            if (savedColor) {
-                changeWallpaperColor(savedColor);
-                document.getElementById('wallpaper-color-picker').value = savedColor;
-            }
+        let isIncognito = false;
+        let allowStorage = false;
+        let shortcuts = [
+            { name: "Discord", url: "https://discord.com", icon: "💬" },
+            { name: "YouTube", url: "https://youtube.com", icon: "📺" }
+        ];
+        let searchHistory = [];
 
-            // Sprawdź czy użytkownik zaakceptował już komunikat o cookies
-            const cookiesAccepted = localStorage.getItem('velo_cookies_accepted');
-            if (!cookiesAccepted) {
+        window.onload = function() {
+            const cookieChoice = localStorage.getItem('velo_storage_allowed');
+            
+            if (cookieChoice === 'true') {
+                allowStorage = true;
+                loadSavedData();
+            } else if (cookieChoice === null) {
                 document.getElementById('cookie-bar').style.display = 'flex';
             }
+            renderShortcuts();
+            renderHistory();
         };
+
+        function setCookieChoice(choice) {
+            document.getElementById('cookie-bar').style.display = 'none';
+            if (choice) {
+                allowStorage = true;
+                localStorage.setItem('velo_storage_allowed', 'true');
+                saveShortcuts();
+            } else {
+                allowStorage = false;
+                localStorage.setItem('velo_storage_allowed', 'false');
+            }
+        }
+
+        function loadSavedData() {
+            if (!allowStorage) return;
+            const savedColor = localStorage.getItem('velo_bg_color');
+            if (savedColor) changeWallpaperColor(savedColor);
+
+            const savedShortcuts = localStorage.getItem('velo_shortcuts');
+            if (savedShortcuts) shortcuts = JSON.parse(savedShortcuts);
+
+            const savedHistory = localStorage.getItem('velo_history');
+            if (savedHistory) searchHistory = JSON.parse(savedHistory);
+        }
+
+        /* SYSTEM SKRÓTÓW */
+        function renderShortcuts() {
+            const container = document.getElementById('shortcuts-container');
+            container.innerHTML = '';
+            
+            shortcuts.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="shortcut-card" onclick="window.location.href='${item.url}'">
+                        <div class="shortcut-icon">${item.icon}</div>
+                        <div class="shortcut-label">${item.name}</div>
+                    </div>
+                `;
+            });
+
+            // Przycisk dodawania nowego skrótu (+)
+            container.innerHTML += `
+                <div class="shortcut-card" onclick="addNewShortcut()">
+                    <div class="shortcut-icon">➕</div>
+                    <div class="shortcut-label">Dodaj</div>
+                </div>
+            `;
+        }
+
+        function addNewShortcut() {
+            const name = prompt("Wpisz nazwę strony (np. Google):");
+            if (!name) return;
+            let url = prompt("Wpisz adres URL strony (np. google.com):");
+            if (!url) return;
+            const icon = prompt("Wpisz jedno emoji jako ikonę (np. 🌐):") || "🌐";
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
+
+            shortcuts.push({ name, url, icon });
+            renderShortcuts();
+            saveShortcuts();
+        }
+
+        function saveShortcuts() {
+            if (allowStorage && !isIncognito) {
+                localStorage.setItem('velo_shortcuts', JSON.stringify(shortcuts));
+            }
+        }
+
+        /* PODPOWIEDZI Z GOOGLE */
+        function fetchSuggestions(query) {
+            const sugBox = document.getElementById('suggestions');
+            if (query.trim() === "") {
+                sugBox.style.display = 'none';
+                return;
+            }
+
+            // Korzystamy z dynamicznego skryptu (JSONP), by pobrać oficjalne podpowiedzi z Google
+            const script = document.createElement('script');
+            script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(query)}&callback=handleSuggestions`;
+            document.body.appendChild(script);
+            document.body.removeChild(script);
+        }
+
+        function handleSuggestions(data) {
+            const sugBox = document.getElementById('suggestions');
+            sugBox.innerHTML = '';
+            const queries = data[1];
+
+            if (queries.length === 0) {
+                sugBox.style.display = 'none';
+                return;
+            }
+
+            queries.slice(0, 5).forEach(text => {
+                const item = document.createElement('div');
+                item.className = 'suggestion-item';
+                item.innerText = text;
+                item.onclick = function() {
+                    document.getElementById('center-url-input').value = text;
+                    sugBox.style.display = 'none';
+                    executeSearch(text);
+                };
+                sugBox.appendChild(item);
+            });
+            sugBox.style.display = 'flex';
+        }
+
+        /* HISTORIA WYSZUKIWANIA */
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            container.innerHTML = '';
+            
+            if (searchHistory.length === 0) {
+                container.innerHTML = '<div style="font-size:12px; opacity:0.5;">Brak historii wyszukiwania.</div>';
+                return;
+            }
+
+            searchHistory.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="history-item">
+                        <span style="cursor:pointer;" onclick="executeSearch('${item}')">🔍 ${item}</span>
+                        <span class="delete-hist-btn" onclick="deleteHistoryItem(${index})">❌</span>
+                    </div>
+                `;
+            });
+        }
+
+        function addQueryToHistory(query) {
+            if (isIncognito) return; // W incognito nic nie zapisujemy!
+            
+            // Usuń powtórzenia, żeby nie dublować haseł
+            searchHistory = searchHistory.filter(item => item !== query);
+            searchHistory.unshift(query);
+            
+            if (searchHistory.length > 10) searchHistory.pop(); // Maksymalnie 10 pozycji
+
+            renderHistory();
+            if (allowStorage) localStorage.setItem('velo_history', JSON.stringify(searchHistory));
+        }
+
+        function deleteHistoryItem(index) {
+            searchHistory.splice(index, 1);
+            renderHistory();
+            if (allowStorage) localStorage.setItem('velo_history', JSON.stringify(searchHistory));
+        }
+
+        function clearAllHistory() {
+            searchHistory = [];
+            renderHistory();
+            if (allowStorage) localStorage.removeItem('velo_history');
+        }
+
+        /* NAWIGACJA I TRYBY */
+        function executeSearch(query) {
+            addQueryToHistory(query);
+            const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+            window.location.href = googleSearchUrl;
+        }
 
         function navigate(inputId) {
             const input = document.getElementById(inputId);
@@ -271,62 +475,48 @@
             const isUrl = query.includes('.') && !query.includes(' ');
 
             if (isUrl) {
-                if (!query.startsWith('http://') && !query.startsWith('https://')) {
-                    query = 'https://' + query;
-                }
+                if (!query.startsWith('http://') && !query.startsWith('https://')) query = 'https://' + query;
                 window.location.href = query;
             } else {
-                const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
-                window.location.href = googleSearchUrl;
+                executeSearch(query);
             }
         }
 
         function checkEnter(event, inputId) {
             if (event.key === 'Enter') {
+                document.getElementById('suggestions').style.display = 'none';
                 navigate(inputId);
             }
         }
 
-        function goHome() {
-            window.location.href = "index.html";
+        function toggleIncognito() {
+            isIncognito = !isIncognito;
+            document.body.setAttribute('data-incognito', isIncognito);
+            const btn = document.getElementById('incognito-btn');
+            const title = document.getElementById('main-title');
+
+            if (isIncognito) {
+                btn.style.backgroundColor = '#8ab4f8';
+                title.innerText = "VeloBrowser (Incognito)";
+                alert("Uruchomiono tryb Incognito. Historia wyszukiwania i nowe skróty nie będą zapisywane.");
+            } else {
+                btn.style.backgroundColor = '';
+                title.innerText = "VeloBrowser";
+            }
         }
 
+        function changeWallpaperColor(colorHex) {
+            document.getElementById('home-bg').style.backgroundColor = colorHex;
+            if (allowStorage && !isIncognito) localStorage.setItem('velo_bg_color', colorHex);
+        }
+
+        function goHome() { window.location.href = "index.html"; }
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             document.documentElement.setAttribute('data-theme', newTheme);
         }
-
-        // Zmiana koloru tła i ZAPISYWANIE go w pamięci
-        function changeWallpaperColor(colorHex) {
-            const bgElement = document.getElementById('home-bg');
-            bgElement.style.backgroundColor = colorHex;
-
-            // Zapisujemy kolor, aby nie zniknął po wyjściu ze strony!
-            localStorage.setItem('velo_bg_color', colorHex);
-
-            // Sprawdzanie jasności koloru, by dopasować kolor czcionki
-            const r = parseInt(colorHex.substr(1,2), 16);
-            const g = parseInt(colorHex.substr(3,2), 16);
-            const b = parseInt(colorHex.substr(5,2), 16);
-            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-            if (brightness > 125) {
-                bgElement.style.color = '#1c1e21';
-            } else {
-                bgElement.style.color = '#e8eaed';
-            }
-        }
-
-        // Ukrywanie paska cookies po kliknięciu przycisku
-        function acceptCookies() {
-            document.getElementById('cookie-bar').style.display = 'none';
-            localStorage.setItem('velo_cookies_accepted', 'true');
-        }
-
-        function aboutVelo() {
-            alert("VeloBrowser – stworzony przez Ewewerban! Wybierz kolor w lewym dolnym rogu!");
-        }
+        function aboutVelo() { alert("VeloBrowser Pro – pełna personalizacja, historia i Incognito!"); }
     </script>
 </body>
 </html>
