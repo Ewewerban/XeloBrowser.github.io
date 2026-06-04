@@ -22,41 +22,51 @@
             overflow-x: hidden;
         }
 
-        /* Górny panel */
+        /* Górny panel funkcyjny */
         .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 20px;
-            background-color: rgba(0, 0, 0, 0.2);
+            padding: 12px 20px;
+            background-color: #1c1d20;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            z-index: 500;
         }
 
         .left-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
         }
 
         .mascot-logo {
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
             user-select: none;
         }
 
+        .brand-name-top {
+            font-weight: 600;
+            font-size: 15px;
+            letter-spacing: -0.3px;
+        }
+
         .incognito-btn {
             background: none;
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.25);
             color: white;
-            padding: 5px 12px;
-            border-radius: 15px;
+            padding: 6px 14px;
+            border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
-            transition: all 0.2s;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
         .incognito-btn:hover {
             background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.4);
         }
 
         /* Główny kontener */
@@ -74,18 +84,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 12px;
+            margin-bottom: 25px;
         }
 
         .brand h1 {
-            font-size: 42px;
+            font-size: 44px;
             font-weight: 600;
             letter-spacing: -0.5px;
         }
 
         .brand-mascot {
             font-size: 65px;
+            user-select: none;
         }
 
         /* Wyszukiwarka i podpowiedzi */
@@ -94,7 +105,7 @@
             max-width: 560px;
             position: relative;
             margin-bottom: 35px;
-            z-index: 100;
+            z-index: 1000;
         }
 
         .search-box {
@@ -104,20 +115,26 @@
 
         .search-box input {
             width: 100%;
-            padding: 14px 20px 14px 45px;
+            padding: 14px 20px 14px 48px;
             border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             background-color: #303134;
             color: white;
             font-size: 16px;
             outline: none;
-            box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.2s;
+        }
+
+        .search-box input:focus {
+            background-color: #3c4043;
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .search-box::before {
             content: "🔍";
             position: absolute;
-            left: 16px;
+            left: 18px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 16px;
@@ -131,11 +148,11 @@
             width: 100%;
             background-color: #303134;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
             display: none;
             flex-direction: column;
             overflow: hidden;
-            z-index: 110;
+            z-index: 1100;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
@@ -144,10 +161,12 @@
             cursor: pointer;
             font-size: 15px;
             text-align: left;
+            color: #e8eaed;
         }
 
         .suggestion-item:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.08);
+            color: white;
         }
 
         /* Skróty (Kafelki) */
@@ -157,7 +176,7 @@
             justify-content: center;
             gap: 24px;
             max-width: 650px;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
         }
 
         .tile {
@@ -174,20 +193,21 @@
             width: 60px;
             height: 60px;
             background-color: #303134;
-            border-radius: 12px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 26px;
             margin-bottom: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s;
         }
 
         .tile:hover .tile-icon {
             transform: translateY(-4px);
             background-color: #3c4043;
+            border-color: rgba(255, 255, 255, 0.15);
         }
 
         .tile-label {
@@ -197,71 +217,79 @@
             overflow: hidden;
             text-overflow: ellipsis;
             width: 100%;
-            opacity: 0.9;
+            opacity: 0.85;
         }
 
         /* Panel Historii */
         .history-box {
             width: 100%;
-            max-width: 400px;
-            background-color: rgba(0, 0, 0, 0.15);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 440px;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .history-header {
             display: flex;
             justify-content: space-between;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            opacity: 0.7;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            opacity: 0.6;
         }
 
         .history-clear {
             cursor: pointer;
             color: #ff9400;
+            transition: opacity 0.2s;
         }
+
+        .history-clear:hover { opacity: 0.8; }
 
         .history-items {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            max-height: 120px;
+            gap: 8px;
+            max-height: 130px;
             overflow-y: auto;
         }
 
         .history-row {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             font-size: 13px;
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 6px 12px;
-            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.04);
+            padding: 8px 14px;
+            border-radius: 8px;
             text-align: left;
         }
 
         .history-text {
             cursor: pointer;
+            flex: 1;
         }
 
-        .history-text:hover { text-decoration: underline; }
+        .history-text:hover { text-decoration: underline; color: #ff9400; }
 
         .history-del {
             cursor: pointer;
-            opacity: 0.5;
+            opacity: 0.4;
+            padding-left: 10px;
+            transition: opacity 0.2s;
         }
         .history-del:hover { opacity: 1; }
 
-        /* Próbnik koloru */
+        /* Próbnik koloru w rogu */
         .picker-container {
             position: absolute;
             left: 20px;
             bottom: 20px;
             background-color: #303134;
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -269,6 +297,7 @@
             font-size: 20px;
             cursor: pointer;
             border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .picker-input {
@@ -279,7 +308,7 @@
             cursor: pointer;
         }
 
-        /* DUŻE POMARAŃCZOWE OKNO COOKIES */
+        /* POTĘŻNE POMARAŃCZOWE OKNO COOKIES */
         .cookie-backdrop {
             position: fixed;
             top: 0;
@@ -287,365 +316,53 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.85);
-            display: none;
+            display: none; /* Sterowane bezpiecznie przez JS */
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
+            z-index: 9999;
+            backdrop-filter: blur(6px);
         }
 
         .cookie-window {
             background-color: #282a2d;
-            border: 4px solid #ff9400;
-            border-radius: 20px;
-            padding: 30px;
+            border: 4px solid #ff9400; /* Piękna pomarańczowa ramka */
+            border-radius: 24px;
+            padding: 35px;
             width: 90%;
-            max-width: 440px;
+            max-width: 450px;
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
         .cookie-icon {
-            font-size: 55px;
+            font-size: 60px;
             margin-bottom: 15px;
+            animation: bounce 2s infinite;
         }
 
         .cookie-window h2 {
             color: #ff9400;
-            font-size: 22px;
-            margin-bottom: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 14px;
         }
 
         .cookie-window p {
             font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 25px;
-            opacity: 0.85;
+            line-height: 1.6;
+            margin-bottom: 28px;
+            color: #dae0e6;
         }
 
-        .cookie-buttons {
+        .cookie-btns-container {
             display: flex;
-            gap: 15px;
+            gap: 16px;
             justify-content: center;
         }
 
         .c-btn {
-            padding: 10px 22px;
+            padding: 12px 26px;
             border: none;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .c-accept { background-color: #ff9400; color: #1c1a1a; }
-        .c-deny { background-color: #5f6368; color: white; }
-
-        /* Tryb Incognito */
-        body.incognito-mode {
-            background-color: #160f22 !important;
-        }
-        body.incognito-mode .top-bar {
-            background-color: #0e0917;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="top-bar">
-        <div class="left-controls">
-            <div class="mascot-logo" onclick="alert('Xelo Browser – Cheetah Pro')">🐆</div>
-            <div style="font-weight: bold; font-size: 14px;">Xelo Browser</div>
-        </div>
-        <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
-    </div>
-
-    <div class="main-content" id="bg-layer">
-        <div class="brand">
-            <div class="brand-mascot">🐆</div>
-            <h1 id="brand-text">Xelo Browser</h1>
-        </div>
-
-        <div class="search-area">
-            <div class="search-box">
-                <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" oninput="getOnlineSuggestions(this.value)" autocomplete="off">
-            </div>
-            <div class="suggestions-list" id="sug-box"></div>
-        </div>
-
-        <div class="shortcuts-grid" id="shortcuts-grid"></div>
-
-        <div class="history-box">
-            <div class="history-header">
-                <span>🕒 HISTORIA WYSZUKIWANIA</span>
-                <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
-            </div>
-            <div class="history-items" id="hist-list"></div>
-        </div>
-
-        <div class="picker-container">
-            🎨
-            <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
-        </div>
-    </div>
-
-    <div class="cookie-backdrop" id="cookie-modal">
-        <div class="cookie-window">
-            <div class="cookie-icon">🍪</div>
-            <h2>Zgoda na pliki Cookies / Pamięć</h2>
-            <p>Xelo Browser chce używać funkcji LocalStorage Twojego urządzenia, aby móc lokalnie zapisywać dodane kafelki stron, historię denerwującą kolegów oraz kolory tła.</p>
-            <div class="cookie-buttons">
-                <button class="c-btn c-accept" onclick="cookieDecision(true)">Akceptuję</button>
-                <button class="c-btn c-deny" onclick="cookieDecision(false)">Blokuję pamięć</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let storageAllowed = false;
-        let incognito = false;
-        
-        let tiles = [
-            { name: "Discord", url: "https://discord.com", icon: "💬" },
-            { name: "YouTube", url: "https://youtube.com", icon: "📺" },
-            { name: "Minecraft Wiki", url: "https://minecraft.wiki", icon: "🧱" }
-        ];
-        
-        let historyData = [];
-        const staticSuggestions = ["discord", "youtube", "minecraft", "allegro", "facebook", "roblox", "gry online", "pogoda", "tłumacz google", "github"];
-
-        window.onload = function() {
-            try {
-                const consent = localStorage.getItem('velo_consent');
-                if (consent === 'true') {
-                    storageAllowed = true;
-                    loadData();
-                } else {
-                    document.getElementById('cookie-modal').style.display = 'flex';
-                }
-            } catch(e) {
-                document.getElementById('cookie-modal').style.display = 'flex';
-            }
-            renderTiles();
-            renderHistory();
-        };
-
-        function cookieDecision(choice) {
-            document.getElementById('cookie-modal').style.display = 'none';
-            if (choice) {
-                storageAllowed = true;
-                try {
-                    localStorage.setItem('velo_consent', 'true');
-                    saveTiles();
-                } catch(e) {}
-            } else {
-                storageAllowed = false;
-                try { localStorage.clear(); } catch(e) {}
-            }
-        }
-
-        function loadData() {
-            if (!storageAllowed) return;
-            try {
-                const c = localStorage.getItem('velo_bg');
-                if (c) changeBg(c);
-                const t = localStorage.getItem('velo_tiles');
-                if (t) tiles = JSON.parse(t);
-                const h = localStorage.getItem('velo_hist');
-                if (h) historyData = JSON.parse(h);
-            } catch(e) {}
-        }
-
-        function changeBg(hex) {
-            document.getElementById('bg-layer').style.backgroundColor = hex;
-            if (storageAllowed && !incognito) {
-                try { localStorage.setItem('velo_bg', hex); } catch(e) {}
-            }
-        }
-
-        /* KAFELKI */
-        function renderTiles() {
-            const grid = document.getElementById('shortcuts-grid');
-            grid.innerHTML = '';
-            tiles.forEach(tile => {
-                grid.innerHTML += `
-                    <a href="${tile.url}" target="_blank" class="tile">
-                        <div class="tile-icon">${tile.icon}</div>
-                        <div class="tile-label">${tile.name}</div>
-                    </a>
-                `;
-            });
-            grid.innerHTML += `
-                <div class="tile" onclick="addTile()">
-                    <div class="tile-icon">➕</div>
-                    <div class="tile-label">Dodaj</div>
-                </div>
-            `;
-        }
-
-        function addTile() {
-            const name = prompt("Podaj nazwę strony:");
-            if (!name) return;
-            let url = prompt("Podaj adres URL (np. allegro.pl):");
-            if (!url) return;
-            const icon = prompt("Podaj jedno emoji jako ikonę:") || "🌐";
-
-            if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
-            tiles.push({ name, url, icon });
-            renderTiles();
-            saveTiles();
-        }
-
-        function saveTiles() {
-            if (storageAllowed && !incognito) {
-                try { localStorage.setItem('velo_tiles', JSON.stringify(tiles)); } catch(e) {}
-            }
-        }
-
-        /* HISTORIA I WYSZUKIWANIE */
-        function handleEnter(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('sug-box').style.display = 'none';
-                triggerSearch(e.target.value);
-            }
-        }
-
-        function triggerSearch(val) {
-            if (!val.trim()) return;
-            if (!incognito) {
-                historyData = historyData.filter(i => i !== val);
-                historyData.unshift(val);
-                if (historyData.length > 8) historyData.pop();
-                renderHistory();
-                if (storageAllowed) {
-                    try { localStorage.setItem('velo_hist', JSON.stringify(historyData)); } catch(e) {}
-                }
-            }
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(val)}`, '_blank');
-        }
-
-        function renderHistory() {
-            const list = document.getElementById('hist-list');
-            list.innerHTML = '';
-            if (historyData.length === 0) {
-                list.innerHTML = '<div style="font-size:12px; opacity:0.4; text-align:center;">Brak wpisów</div>';
-                return;
-            }
-            historyData.forEach((item, idx) => {
-                list.innerHTML += `
-                    <div class="history-row">
-                        <span class="history-text" onclick="triggerSearch('${item}')">🔍 ${item}</span>
-                        <span class="history-del" onclick="delHist(${idx})">❌</span>
-                    </div>
-                `;
-            });
-        }
-
-        function delHist(idx) {
-            historyData.splice(idx, 1);
-            renderHistory();
-            if (storageAllowed) {
-                try { localStorage.setItem('velo_hist', JSON.stringify(historyData)); } catch(e) {}
-            }
-        }
-
-        function clearHistory() {
-            historyData = [];
-            renderHistory();
-            if (storageAllowed) {
-                try { localStorage.removeItem('velo_hist'); } catch(e) {}
-            }
-        }
-
-        /* NOWE: PRAWDZIWE PODPOWIEDZI Z INTERNETU (GOOGLE) */
-        function getOnlineSuggestions(val) {
-            const box = document.getElementById('sug-box');
-            if (!val.trim()) { box.style.display = 'none'; return; }
-
-            // Usuwamy stary skrypt podpowiedzi, aby nie śmiecić w pamięci strony
-            const oldScript = document.getElementById('google-suggest-script');
-            if (oldScript) oldScript.remove();
-
-            // Tworzymy nowe, dynamiczne zapytanie do serwera Google
-            const script = document.createElement('script');
-            script.id = 'google-suggest-script';
-            // Parametr &callback=processSuggestions przekazuje dane prosto do naszego kodu internetowego
-            script.src = `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(val)}&callback=processSuggestions&_=${Date.now()}`;
-            
-            // W razie braku internetu lub błędu sieci, ładujemy awaryjnie lokalną bazę po 800ms
-            const networkTimeout = setTimeout(() => {
-                fallbackLocalSuggestions(val);
-            }, 800);
-
-            window.currentTimeout = networkTimeout;
-            document.body.appendChild(script);
-        }
-
-        // Ta funkcja odbiera prawdziwe dane przysłane z internetu od Google
-        function processSuggestions(data) {
-            clearTimeout(window.currentTimeout); // Internet odpowiedział na czas!
-            const box = document.getElementById('sug-box');
-            box.innerHTML = '';
-            
-            const onlineMatches = data[1] || [];
-            if (onlineMatches.length === 0) { box.style.display = 'none'; return; }
-
-            // Wyświetlamy 5 najlepszych wyników prosto z wyszukiwarki Google
-            onlineMatches.slice(0, 5).forEach(txt => {
-                const d = document.createElement('div');
-                d.className = 'suggestion-item';
-                d.innerText = txt;
-                d.onclick = () => {
-                    document.getElementById('search-in').value = txt;
-                    box.style.display = 'none';
-                    triggerSearch(txt);
-                };
-                box.appendChild(d);
-            });
-            box.style.display = 'flex';
-        }
-
-        // Funkcja awaryjna (gdyby Google odrzuciło połączenie)
-        function fallbackLocalSuggestions(val) {
-            const box = document.getElementById('sug-box');
-            const query = val.toLowerCase();
-            const matches = [...new Set([...historyData, ...staticSuggestions])]
-                .filter(item => item.toLowerCase().includes(query))
-                .slice(0, 5);
-
-            if (matches.length === 0) { box.style.display = 'none'; return; }
-            box.innerHTML = '';
-            matches.forEach(txt => {
-                const d = document.createElement('div');
-                d.className = 'suggestion-item';
-                d.innerText = txt;
-                d.onclick = () => {
-                    document.getElementById('search-in').value = txt;
-                    box.style.display = 'none';
-                    triggerSearch(txt);
-                };
-                box.appendChild(d);
-            });
-            box.style.display = 'flex';
-        }
-
-        /* INCOGNITO */
-        function toggleIncognito() {
-            incognito = !incognito;
-            document.body.classList.toggle('incognito-mode', incognito);
-            const btn = document.getElementById('incog-toggle');
-            const title = document.getElementById('brand-text');
-
-            if (incognito) {
-                btn.innerText = "🕵️ Tryb Incognito: WŁĄCZONY";
-                btn.style.borderColor = '#ff9400';
-                title.innerText = "Xelo Browser (Incognito)";
-            } else {
-                btn.innerText = "🕵️ Tryb Incognito";
-                btn.style.borderColor = '';
-                title.innerText = "Xelo Browser";
-            }
-        }
-    </script>
-</body>
-</html>
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1
