@@ -6,7 +6,7 @@
     <title>VeloBrowser – Web Edition</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Dodatkowe style specjalnie dla ekranu startowego */
+        /* Ekran startowy w stylu Firefoxa */
         .home-screen {
             display: flex;
             flex-direction: column;
@@ -16,34 +16,106 @@
             color: var(--text-color);
             text-align: center;
             padding: 20px;
+            /* Możesz odkomentować poniższą linijkę, jeśli chcesz pomarańczowe tło jak na screenie: */
+            /* background: linear-gradient(135deg, #ff9400, #ff5a00); */
+        }
+
+        /* Logo i nazwa na środku */
+        .brand-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
         .big-mascot {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
+            font-size: 65px;
+            animation: float 4s ease-in-out infinite;
         }
-        .home-screen h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            font-weight: 600;
+        .brand-title {
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: -1px;
         }
-        .home-screen p {
+
+        /* Środkowy duży pasek wyszukiwania */
+        .center-search-box {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            margin-bottom: 40px;
+        }
+        .center-search-box input {
+            width: 100%;
+            padding: 14px 25px 14px 50px;
+            border-radius: 30px;
+            border: 1px solid var(--border-address);
+            background-color: var(--bg-toolbar);
+            color: var(--text-color);
             font-size: 16px;
-            color: #8ab4f8;
-            margin-bottom: 30px;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
         }
-        .search-info {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 15px 25px;
+        .center-search-box input:focus {
+            border-color: #8ab4f8;
+            box-shadow: 0 4px 20px rgba(138, 180, 248, 0.2);
+        }
+        .center-search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            opacity: 0.7;
+        }
+
+        /* Siatka skrótów (Kafelki do stron) */
+        .shortcuts-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 800px;
+        }
+        .shortcut-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-color);
+            width: 90px;
+            transition: transform 0.2s;
+        }
+        .shortcut-card:hover {
+            transform: translateY(-5px);
+        }
+        /* Kwadratowa ikona */
+        .shortcut-icon {
+            width: 60px;
+            height: 60px;
+            background-color: var(--bg-toolbar);
             border-radius: 12px;
-            max-width: 500px;
-            font-size: 14px;
-            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border: 1px solid var(--border-address);
         }
+        .shortcut-label {
+            font-size: 12px;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); }
             100% { transform: translateY(0px); }
         }
     </style>
@@ -51,62 +123,84 @@
 <body>
 
     <div class="toolbar">
-        <div class="mascot" title="Jestem Velo, maskotka przeglądarki!" onclick="aboutVelo()">🐆</div>
-        
+        <div class="mascot" title="VeloBrowser" onclick="aboutVelo()">🐆</div>
         <button class="btn" onclick="goHome()">⌂</button>
-        
-        <input type="text" id="url-input" class="address-bar" placeholder="Wpisz czego szukasz w Google lub podaj adres URL..." onkeydown="checkEnter(event)">
-        
-        <button class="btn" onclick="navigate()" title="Wyszukaj / Przejdź">🔍</button>
+        <input type="text" id="top-url-input" class="address-bar" placeholder="Wyszukaj w Google lub wpisz adres..." onkeydown="checkEnter(event, 'top-url-input')">
+        <button class="btn" onclick="navigate('top-url-input')" title="Szukaj">🔍</button>
         <button class="btn" onclick="toggleTheme()" title="Zmień motyw">💡</button>
     </div>
 
     <div class="home-screen">
-        <div class="big-mascot">🐆</div>
-        <h1>VeloBrowser</h1>
-        <p>Szybkie wyszukiwanie oparte o silnik Google</p>
         
-        <div class="search-info">
-            <strong>Jak używać?</strong><br>
-            Wpisz dowolne hasło na pasku u góry i naciśnij <strong>Enter</strong> lub kliknij ikonę lupy 🔍. VeloBrowser błyskawicznie przekieruje Cię do bezpiecznego okna wyszukiwania Google!
+        <div class="brand-container">
+            <div class="big-mascot">🐆</div>
+            <div class="brand-title">VeloBrowser</div>
+        </div>
+
+        <div class="center-search-box">
+            <input type="text" id="center-url-input" placeholder="Wprowadź adres lub szukaj w Google" onkeydown="checkEnter(event, 'center-url-input')" autofocus>
+        </div>
+
+        <div class="shortcuts-grid">
+            
+            <a href="https://discord.com" target="_blank" class="shortcut-card">
+                <div class="shortcut-icon">💬</div>
+                <div class="shortcut-label">Discord</div>
+            </a>
+
+            <a href="https://minecraft.wiki" target="_blank" class="shortcut-card">
+                <div class="shortcut-icon">🧱</div>
+                <div class="shortcut-label">Minecraft Wiki</div>
+            </a>
+
+            <a href="https://allegro.pl" target="_blank" class="shortcut-card">
+                <div class="shortcut-icon">🟠</div>
+                <div class="shortcut-label">Allegro</div>
+            </a>
+
+            <a href="https://www.youtube.com" target="_blank" class="shortcut-card">
+                <div class="shortcut-icon">📺</div>
+                <div class="shortcut-label">YouTube</div>
+            </a>
+
+            <a href="https://github.com" target="_blank" class="shortcut-card">
+                <div class="shortcut-icon">🐙</div>
+                <div class="shortcut-label">GitHub</div>
+            </a>
+
         </div>
     </div>
 
     <script>
-        const urlInput = document.getElementById('url-input');
-
-        function navigate() {
-            let query = urlInput.value.trim();
+        function navigate(inputId) {
+            const input = document.getElementById(inputId);
+            let query = input.value.trim();
             if (query === "") return;
 
-            // Sprawdzamy, czy użytkownik wpisał adres strony (np. zawierający kropkę i brak spacji)
             const isUrl = query.includes('.') && !query.includes(' ');
 
             if (isUrl) {
-                // Jeśli to adres, upewniamy się, że ma http/https i otwieramy stronę
                 if (!query.startsWith('http://') && !query.startsWith('https://')) {
                     query = 'https://' + query;
                 }
                 window.open(query, '_blank');
             } else {
-                // Jeśli to zwykły tekst, wyszukujemy go w Google!
                 const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
                 window.open(googleSearchUrl, '_blank');
             }
             
-            // Po wyszukaniu czyścimy pasek dla wygody
-            urlInput.value = "";
+            input.value = "";
         }
 
-        function checkEnter(event) {
+        function checkEnter(event, inputId) {
             if (event.key === 'Enter') {
-                navigate();
+                navigate(inputId);
             }
         }
 
         function goHome() {
-            urlInput.value = "";
-            urlInput.focus();
+            document.getElementById('center-url-input').value = "";
+            document.getElementById('center-url-input').focus();
         }
 
         function toggleTheme() {
@@ -116,7 +210,7 @@
         }
 
         function aboutVelo() {
-            alert("Cześć! Jestem Velo! Wpisz coś w pasek powyżej, a pomogę Ci znaleźć to w Google!");
+            alert("VeloBrowser – stworzony przez Ewewerban!");
         }
     </script>
 </body>
