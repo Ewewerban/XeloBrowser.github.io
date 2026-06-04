@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-/* Zmienne globalne dla motywu ciemnego */
+/* Zmienne globalne dla motywu ciemnego paska */
 :root {
     --bg-toolbar: #2f3136;
     --bg-address: #202124;
@@ -13,7 +13,7 @@
     --btn-hover: rgba(255, 255, 255, 0.1);
 }
 
-/* Zmienne globalne dla motywu jasnego */
+/* Zmienne globalne dla motywu jasnego paska */
 [data-theme="light"] {
     --bg-toolbar: #f1f3f4;
     --bg-address: #ffffff;
@@ -28,7 +28,6 @@ body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden;
     background-color: var(--bg-address);
-    transition: background-color 0.3s;
 }
 
 /* Pasek narzędzi na samej górze */
@@ -39,6 +38,8 @@ body, html {
     padding: 8px;
     gap: 8px;
     border-bottom: 1px solid rgba(0,0,0,0.2);
+    position: relative;
+    z-index: 10;
     transition: background-color 0.3s;
 }
 
@@ -62,7 +63,7 @@ body, html {
     background-color: var(--btn-hover);
 }
 
-/* Górny miniaturowy pasek adresu */
+/* Górny mini pasek adresu */
 .address-bar {
     flex-grow: 1;
     background-color: var(--bg-address);
