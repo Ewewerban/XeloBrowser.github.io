@@ -16,8 +16,6 @@
             color: var(--text-color);
             text-align: center;
             padding: 20px;
-            /* Możesz odkomentować poniższą linijkę, jeśli chcesz pomarańczowe tło jak na screenie: */
-            /* background: linear-gradient(135deg, #ff9400, #ff5a00); */
         }
 
         /* Logo i nazwa na środku */
@@ -124,7 +122,12 @@
 
     <div class="toolbar">
         <div class="mascot" title="VeloBrowser" onclick="aboutVelo()">🐆</div>
-        <button class="btn" onclick="goHome()">⌂</button>
+        
+        <button class="btn" onclick="alert('Strony otwierają się w nowej karcie – użyj strzałek wstecz/dalej w swojej głównej przeglądarce!')" title="Wstecz">←</button>
+        <button class="btn" onclick="alert('Strony otwierają się w nowej karcie – użyj strzałek wstecz/dalej w swojej głównej przeglądarce!')" title="Dalej">→</button>
+        <button class="btn" onclick="location.reload()" title="Odśwież tę kartę">↻</button>
+        <button class="btn" onclick="goHome()" title="Strona główna">⌂</button>
+        
         <input type="text" id="top-url-input" class="address-bar" placeholder="Wyszukaj w Google lub wpisz adres..." onkeydown="checkEnter(event, 'top-url-input')">
         <button class="btn" onclick="navigate('top-url-input')" title="Szukaj">🔍</button>
         <button class="btn" onclick="toggleTheme()" title="Zmień motyw">💡</button>
@@ -202,16 +205,3 @@
             document.getElementById('center-url-input').value = "";
             document.getElementById('center-url-input').focus();
         }
-
-        function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-        }
-
-        function aboutVelo() {
-            alert("VeloBrowser – stworzony przez Ewewerban!");
-        }
-    </script>
-</body>
-</html>
