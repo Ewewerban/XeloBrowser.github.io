@@ -16,9 +16,9 @@
             color: var(--text-color);
             text-align: center;
             padding: 20px;
-            /* Domyślny kolor tła, który będzie zmieniany przez Color Picker */
             background-color: #202124;
             transition: background-color 0.2s ease;
+            position: relative;
         }
 
         /* Logo i nazwa na środku (Gepard) */
@@ -115,12 +115,24 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.6);
         }
 
-        /* Ukryty, sprytny przycisk wyboru koloru, schowany pod ikoną palety */
+        /* NOWOŚĆ: Paleta przeniesiona w LEWY DOLNY RÓG */
         .color-picker-container {
-            position: relative;
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background-color: var(--bg-toolbar);
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            border: 1px solid var(--border-address);
+            width: 44px;
+            height: 44px;
+            transition: transform 0.2s;
+        }
+        .color-picker-container:hover {
+            transform: scale(1.1);
         }
         .custom-color-input {
             position: absolute;
@@ -128,6 +140,42 @@
             width: 100%;
             height: 100%;
             cursor: pointer;
+        }
+        .color-picker-btn {
+            font-size: 22px;
+            pointer-events: none; /* pozwala kliknąć pod spód w input */
+        }
+
+        /* NOWOŚĆ: Pasek informacyjny o plikach Cookies / Przechowywaniu danych */
+        .cookie-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #2f3136;
+            color: #e8eaed;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.4);
+            border-top: 1px solid #5f6368;
+            z-index: 100;
+            font-size: 14px;
+            display: none; /* Domyślnie ukryty, pokaże się przez JS */
+        }
+        .cookie-btn {
+            background-color: #8ab4f8;
+            color: #202124;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .cookie-btn:hover {
+            background-color: #aecbfa;
         }
 
         @keyframes float {
@@ -149,12 +197,6 @@
         
         <input type="text" id="top-url-input" class="address-bar" placeholder="Wyszukaj w Google lub wpisz adres..." onkeydown="checkEnter(event, 'top-url-input')">
         <button class="btn" onclick="navigate('top-url-input')" title="Szukaj">🔍</button>
-        
-        <div class="color-picker-container" title="Zmień kolor tapety">
-            <button class="btn">🎨</button>
-            <input type="color" id="wallpaper-color-picker" class="custom-color-input" value="#202124" oninput="changeWallpaperColor(this.value)">
-        </div>
-
         <button class="btn" onclick="toggleTheme()" title="Zmień motyw paska">💡</button>
     </div>
 
@@ -173,3 +215,118 @@
             <a href="https://discord.com" class="shortcut-card">
                 <div class="shortcut-icon">💬</div>
                 <div class="shortcut-label">Discord</div>
+            </a>
+            <a href="https://minecraft.wiki" class="shortcut-card">
+                <div class="shortcut-icon">🧱</div>
+                <div class="shortcut-label">Minecraft Wiki</div>
+            </a>
+            <a href="https://allegro.pl" class="shortcut-card">
+                <div class="shortcut-icon">🟠</div>
+                <div class="shortcut-label">Allegro</div>
+            </a>
+            <a href="https://www.youtube.com" class="shortcut-card">
+                <div class="shortcut-icon">📺</div>
+                <div class="shortcut-label">YouTube</div>
+            </a>
+            <a href="https://github.com" class="shortcut-card">
+                <div class="shortcut-icon">🐙</div>
+                <div class="shortcut-label">GitHub</div>
+            </a>
+        </div>
+
+        <div class="color-picker-container" title="Zmień kolor tła">
+            <div class="color-picker-btn">🎨</div>
+            <input type="color" id="wallpaper-color-picker" class="custom-color-input" value="#202124" oninput="changeWallpaperColor(this.value)">
+        </div>
+
+    </div>
+
+    <div id="cookie-bar" class="cookie-banner">
+        <span>Ta strona używa pamięci przeglądarki (Local Storage/Cookies), aby zapamiętać Twój spersonalizowany kolor tła.</span>
+        <button class="cookie-btn" onclick="acceptCookies()">Rozumiem</button>
+    </div>
+
+    <script>
+        // Sprawdzamy zapisane ustawienia zaraz po wczytaniu strony
+        window.onload = function() {
+            // Wczytaj zapisany kolor tła
+            const savedColor = localStorage.getItem('velo_bg_color');
+            if (savedColor) {
+                changeWallpaperColor(savedColor);
+                document.getElementById('wallpaper-color-picker').value = savedColor;
+            }
+
+            // Sprawdź czy użytkownik zaakceptował już komunikat o cookies
+            const cookiesAccepted = localStorage.getItem('velo_cookies_accepted');
+            if (!cookiesAccepted) {
+                document.getElementById('cookie-bar').style.display = 'flex';
+            }
+        };
+
+        function navigate(inputId) {
+            const input = document.getElementById(inputId);
+            let query = input.value.trim();
+            if (query === "") return;
+
+            const isUrl = query.includes('.') && !query.includes(' ');
+
+            if (isUrl) {
+                if (!query.startsWith('http://') && !query.startsWith('https://')) {
+                    query = 'https://' + query;
+                }
+                window.location.href = query;
+            } else {
+                const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
+                window.location.href = googleSearchUrl;
+            }
+        }
+
+        function checkEnter(event, inputId) {
+            if (event.key === 'Enter') {
+                navigate(inputId);
+            }
+        }
+
+        function goHome() {
+            window.location.href = "index.html";
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        // Zmiana koloru tła i ZAPISYWANIE go w pamięci
+        function changeWallpaperColor(colorHex) {
+            const bgElement = document.getElementById('home-bg');
+            bgElement.style.backgroundColor = colorHex;
+
+            // Zapisujemy kolor, aby nie zniknął po wyjściu ze strony!
+            localStorage.setItem('velo_bg_color', colorHex);
+
+            // Sprawdzanie jasności koloru, by dopasować kolor czcionki
+            const r = parseInt(colorHex.substr(1,2), 16);
+            const g = parseInt(colorHex.substr(3,2), 16);
+            const b = parseInt(colorHex.substr(5,2), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+            if (brightness > 125) {
+                bgElement.style.color = '#1c1e21';
+            } else {
+                bgElement.style.color = '#e8eaed';
+            }
+        }
+
+        // Ukrywanie paska cookies po kliknięciu przycisku
+        function acceptCookies() {
+            document.getElementById('cookie-bar').style.display = 'none';
+            localStorage.setItem('velo_cookies_accepted', 'true');
+        }
+
+        function aboutVelo() {
+            alert("VeloBrowser – stworzony przez Ewewerban! Wybierz kolor w lewym dolnym rogu!");
+        }
+    </script>
+</body>
+</html>
