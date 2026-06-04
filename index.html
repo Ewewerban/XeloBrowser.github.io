@@ -123,8 +123,8 @@
     <div class="toolbar">
         <div class="mascot" title="VeloBrowser" onclick="aboutVelo()">🐆</div>
         
-        <button class="btn" onclick="alert('Strony otwierają się w nowej karcie – użyj strzałek wstecz/dalej w swojej głównej przeglądarce!')" title="Wstecz">←</button>
-        <button class="btn" onclick="alert('Strony otwierają się w nowej karcie – użyj strzałek wstecz/dalej w swojej głównej przeglądarce!')" title="Dalej">→</button>
+        <button class="btn" onclick="window.history.back()" title="Wstecz">←</button>
+        <button class="btn" onclick="window.history.forward()" title="Dalej">→</button>
         <button class="btn" onclick="location.reload()" title="Odśwież tę kartę">↻</button>
         <button class="btn" onclick="goHome()" title="Strona główna">⌂</button>
         
@@ -146,27 +146,27 @@
 
         <div class="shortcuts-grid">
             
-            <a href="https://discord.com" target="_blank" class="shortcut-card">
+            <a href="https://discord.com" class="shortcut-card">
                 <div class="shortcut-icon">💬</div>
                 <div class="shortcut-label">Discord</div>
             </a>
 
-            <a href="https://minecraft.wiki" target="_blank" class="shortcut-card">
+            <a href="https://minecraft.wiki" class="shortcut-card">
                 <div class="shortcut-icon">🧱</div>
                 <div class="shortcut-label">Minecraft Wiki</div>
             </a>
 
-            <a href="https://allegro.pl" target="_blank" class="shortcut-card">
+            <a href="https://allegro.pl" class="shortcut-card">
                 <div class="shortcut-icon">🟠</div>
                 <div class="shortcut-label">Allegro</div>
             </a>
 
-            <a href="https://www.youtube.com" target="_blank" class="shortcut-card">
+            <a href="https://www.youtube.com" class="shortcut-card">
                 <div class="shortcut-icon">📺</div>
                 <div class="shortcut-label">YouTube</div>
             </a>
 
-            <a href="https://github.com" target="_blank" class="shortcut-card">
+            <a href="https://github.com" class="shortcut-card">
                 <div class="shortcut-icon">🐙</div>
                 <div class="shortcut-label">GitHub</div>
             </a>
@@ -186,13 +186,13 @@
                 if (!query.startsWith('http://') && !query.startsWith('https://')) {
                     query = 'https://' + query;
                 }
-                window.open(query, '_blank');
+                // ZMIANA: Otwieramy w tym samym oknie, Firefox tego nie zablokuje!
+                window.location.href = query;
             } else {
                 const googleSearchUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
-                window.open(googleSearchUrl, '_blank');
+                // ZMIANA: Przekierowanie do Google w tym samym oknie
+                window.location.href = googleSearchUrl;
             }
-            
-            input.value = "";
         }
 
         function checkEnter(event, inputId) {
@@ -202,6 +202,19 @@
         }
 
         function goHome() {
-            document.getElementById('center-url-input').value = "";
-            document.getElementById('center-url-input').focus();
+            // Szybki powrót do ekranu startowego VeloBrowser
+            window.location.href = "index.html";
         }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+        }
+
+        function aboutVelo() {
+            alert("VeloBrowser – stworzony przez Ewewerban!");
+        }
+    </script>
+</body>
+</html>
