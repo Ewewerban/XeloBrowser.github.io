@@ -4,7 +4,7 @@
     padding: 0;
 }
 
-/* Zmienne dla motywów (domyślnie ciemny) */
+/* Zmienne globalne dla motywu ciemnego */
 :root {
     --bg-toolbar: #2f3136;
     --bg-address: #202124;
@@ -13,11 +13,10 @@
     --btn-hover: rgba(255, 255, 255, 0.1);
 }
 
-/* Kolory dla motywu jasnego */
+/* Zmienne globalne dla motywu jasnego */
 [data-theme="light"] {
     --bg-toolbar: #f1f3f4;
     --bg-address: #ffffff;
-    --border-address: #ch1c24;
     --border-address: #dadce0;
     --text-color: #3c4043;
     --btn-hover: rgba(0, 0, 0, 0.05);
@@ -29,9 +28,10 @@ body, html {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     overflow: hidden;
     background-color: var(--bg-address);
+    transition: background-color 0.3s;
 }
 
-/* Pasek narzędzi */
+/* Pasek narzędzi na samej górze */
 .toolbar {
     display: flex;
     align-items: center;
@@ -39,9 +39,10 @@ body, html {
     padding: 8px;
     gap: 8px;
     border-bottom: 1px solid rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
 }
 
-/* Przyciski */
+/* Przyciski nawigacji i akcji */
 .btn {
     background: none;
     border: none;
@@ -54,14 +55,14 @@ body, html {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
+    transition: background 0.2s, color 0.3s;
 }
 
 .btn:hover {
     background-color: var(--btn-hover);
 }
 
-/* Pasek adresu */
+/* Górny miniaturowy pasek adresu */
 .address-bar {
     flex-grow: 1;
     background-color: var(--bg-address);
@@ -71,9 +72,14 @@ body, html {
     border-radius: 20px;
     font-size: 14px;
     outline: none;
+    transition: all 0.3s;
 }
 
-/* Maskotka Velo - Małe logo obok paska */
+.address-bar:focus {
+    border-color: #8ab4f8;
+}
+
+/* Mała ikonka maskotki w lewym górnym rogu */
 .mascot {
     font-size: 22px;
     cursor: pointer;
@@ -83,12 +89,4 @@ body, html {
 }
 .mascot:hover {
     transform: scale(1.2) rotate(10deg);
-}
-
-/* Okno ze stroną */
-.browser-content {
-    width: 100%;
-    height: calc(100% - 49px);
-    border: none;
-    background-color: white;
 }
