@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xelo Browser – Dashboard Pro</title>
+    <title>VeloBrowser</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,237 +12,326 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Roboto, arial, sans-serif;
             background-color: #202124;
             color: #f1f3f4;
             height: 100vh;
             display: flex;
             flex-direction: column;
-            transition: background-color 0.3s ease;
             overflow-x: hidden;
         }
 
-        /* Górny panel */
+        /* --- PASEK GÓRNY (NAWIĄZANIE DO DEKTOPA USERA) --- */
         .top-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 20px;
-            background-color: #1c1d20;
+            padding: 12px 24px;
+            background-color: #202124;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             width: 100%;
-            z-index: 500;
         }
 
         .left-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .mascot-logo {
-            font-size: 22px;
-            cursor: pointer;
-            user-select: none;
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
         }
 
         .brand-name-top {
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: -0.3px;
-            cursor: pointer;
-            user-select: none;
+            font-weight: 500;
+            font-size: 14px;
+            color: #fff;
         }
 
         .incognito-btn {
-            background: none;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            color: white;
+            background: #303134;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #e8eaed;
             padding: 6px 14px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
-            font-weight: 500;
         }
 
-        /* Główny kontener */
+        /* --- MAIN LAYER --- */
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
             position: relative;
+            background-color: #202124;
         }
 
-        /* WIDOK 1: DASHBOARD */
+        /* --- WIDOK 1: PULPIT STARTOWY VELOBROWSER (IDEALNE ODWZOROWANIE) --- */
         #dashboard-view {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            flex: 1;
             width: 100%;
+            padding-bottom: 80px;
         }
 
         .brand {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        .brand h1 {
-            font-size: 44px;
-            font-weight: 600;
-            letter-spacing: -0.5px;
+            gap: 15px;
+            margin-bottom: 28px;
         }
 
         .brand-mascot {
-            font-size: 65px;
+            font-size: 60px;
             user-select: none;
         }
 
-        /* Wyszukiwarka */
-        .search-area {
-            width: 100%;
-            max-width: 560px;
-            position: relative;
-            margin-bottom: 35px;
-            z-index: 1000;
+        .brand h1 {
+            font-size: 40px;
+            font-weight: 500;
+            color: #ffffff;
+            letter-spacing: -0.5px;
         }
 
-        .search-box {
+        .search-area {
             width: 100%;
+            max-width: 584px;
             position: relative;
+            margin-bottom: 40px;
         }
 
         .search-box input {
             width: 100%;
-            padding: 14px 20px 14px 48px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            background-color: #303134;
+            padding: 12px 20px 12px 46px;
+            border-radius: 24px;
+            border: 1px solid #5f6368;
+            background-color: #202124;
             color: white;
             font-size: 16px;
             outline: none;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .search-box input:focus {
+            background-color: #303134;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.3);
+            border-color: transparent;
         }
 
         .search-box::before {
             content: "🔍";
             position: absolute;
-            left: 18px;
+            left: 16px;
             top: 50%;
             transform: translateY(-50%);
-            font-size: 16px;
-            opacity: 0.6;
+            font-size: 15px;
+            opacity: 0.5;
         }
 
-        .suggestions-list {
-            position: absolute;
-            top: 55px;
-            left: 0;
+        .history-box {
             width: 100%;
+            max-width: 584px;
             background-color: #303134;
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            z-index: 1100;
+            padding: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .suggestion-item {
-            padding: 12px 20px;
-            cursor: pointer;
-            font-size: 15px;
-            text-align: left;
-            color: #e8eaed;
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #9aa0a6;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
 
-        .suggestion-item:hover { background-color: rgba(255, 255, 255, 0.08); }
+        .history-clear { cursor: pointer; color: #fbbc05; }
+        .history-items { display: flex; flex-direction: column; gap: 6px; }
+        .history-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .history-text { cursor: pointer; flex: 1; }
+        .history-del { cursor: pointer; opacity: 0.5; }
 
-        /* Kafelki ze skrótami */
+        /* Kafelki skrótów */
         .shortcuts-grid {
             display: flex;
-            flex-wrap: wrap;
             justify-content: center;
-            gap: 24px;
-            max-width: 650px;
-            margin-bottom: 35px;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
 
-        .tile-wrapper { position: relative; width: 80px; }
+        .tile-wrapper {
+            position: relative;
+            width: 74px;
+            text-align: center;
+        }
+
         .tile {
+            text-decoration: none;
+            color: #bdc1c6;
+            font-size: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer;
-            width: 100%;
+            gap: 8px;
         }
 
         .tile-icon {
-            width: 60px;
-            height: 60px;
+            width: 48px;
+            height: 48px;
             background-color: #303134;
-            border-radius: 14px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            margin-bottom: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.2s, background-color 0.2s;
-        }
-
-        .tile-wrapper:hover .tile-icon {
-            transform: translateY(-4px);
-            background-color: #3c4043;
-        }
-
-        .tile-label {
-            font-size: 12px;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            opacity: 0.85;
+            font-size: 20px;
         }
 
         .tile-delete-btn {
             position: absolute;
-            top: -6px;
-            right: 2px;
-            background-color: #ea4335;
+            top: -4px;
+            right: -4px;
+            background: #ea4335;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
+            width: 16px;
+            height: 16px;
+            font-size: 9px;
             cursor: pointer;
+            display: none;
+        }
+
+        .tile-wrapper:hover .tile-delete-btn { display: block; }
+
+
+        /* ========================================================
+           WIDOK 2: WYNIKI - IDEALNA KOPIA INTERFEJSU GOOGLE (BIAŁA)
+           ======================================================== */
+        #results-view {
+            display: none;
+            background-color: #ffffff;
+            color: #202124;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Górny podpasek nawigacyjny Google */
+        .google-nav-strip {
+            border-bottom: 1px solid #ebebeb;
+            padding: 0 160px;
+            display: flex;
+            gap: 20px;
+            height: 48px;
+            align-items: center;
+            font-size: 14px;
+            color: #5f6368;
+        }
+
+        .google-nav-item { cursor: pointer; padding-bottom: 12px; margin-top: 12px; border-bottom: 3px solid transparent; }
+        .google-nav-item.active { color: #1a73e8; border-bottom-color: #1a73e8; font-weight: 500; }
+
+        /* Główny kontener siatki wyników */
+        .google-results-container {
+            padding: 24px 160px;
+            display: flex;
+            gap: 60px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* Lewa strona - standardowe wyniki */
+        .google-left-content {
+            flex: 1;
+            max-width: 652px;
+        }
+
+        /* Sekcja Grafika */
+        .google-section-title {
+            font-size: 20px;
+            color: #202124;
+            margin-bottom: 16px;
+            font-weight: 400;
+        }
+
+        .google-images-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .google-image-card {
+            width: calc(33.333% - 6px);
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #f8f9fa;
+            cursor: pointer;
+        }
+
+        .google-img-box {
+            height: 114px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .google-img-text-box {
+            padding: 8px;
+            font-size: 12px;
+            line-height: 1.34;
+        }
+
+        .google-img-title {
+            color: #3c4043;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .google-img-source {
+            color: #70757a;
             display: flex;
             align-items: center;
-            justify-content: center;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.2s;
+            gap: 4px;
+            margin-top: 4px;
         }
 
-        .tile-wrapper:hover .tile-delete-btn { opacity: 1; }
-
-        /* Panel Historii */
-        .history-box {
+        .google-more-images-btn {
             width: 100%;
-            max-width: 440px;
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background-color: #f1f3f4;
+            border: none;
+            color: #3c4043;
+            padding: 10px;
+            border-radius: 100px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 32px;
+            font-weight: 500;
         }
+        .google-more-images-btn:hover { background-color: #e8eaed; }
+
+        /* Sekcja "Więcej pytań" Accordion */
+        .google-accordion-box {
+            border-top: 1px solid #dadce0;
+            border-bottom: 1px solid #dadce0;
+            margin-bottom: 24px;
+            padding: 4px 0;
+        }
+
+        .accordion-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding
