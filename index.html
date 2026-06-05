@@ -334,4 +334,407 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding
+            padding: 12px 0;
+            font-size: 14px;
+            color: #202124;
+            border-bottom: 1px solid #dadce0;
+            cursor: pointer;
+        }
+        .accordion-row:last-child { border-bottom: none; }
+        .accordion-row::after { content: "▾"; color: #70757a; font-size: 16px; }
+
+        /* Prawa strona - Panel Wiedzy (Knowledge Graph) */
+        .google-right-sidebar {
+            width: 368px;
+            border: 1px solid #dadce0;
+            border-radius: 8px;
+            padding: 16px;
+            height: fit-content;
+        }
+
+        .sidebar-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-title-row h2 {
+            font-size: 28px;
+            font-weight: 400;
+            color: #202124;
+        }
+
+        .sidebar-subtitle {
+            font-size: 14px;
+            color: #70757a;
+            margin-bottom: 16px;
+        }
+
+        /* Odtwarzacz wideo w panelu bocznym */
+        .sidebar-player {
+            width: 100%;
+            height: 194px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .player-play-btn {
+            width: 44px;
+            height: 44px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .player-timestamp {
+            position: absolute;
+            bottom: 8px;
+            left: 8px;
+            background: rgba(0,0,0,0.8);
+            color: #fff;
+            font-size: 12px;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+
+        /* Szczegóły / Dane techniczne */
+        .sidebar-meta-row {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #202124;
+            line-height: 1.43;
+            border-bottom: 1px solid #dadce0;
+            padding-bottom: 8px;
+        }
+        .sidebar-meta-row:last-of-type { border-bottom: none; }
+        .sidebar-meta-row strong { color: #202124; font-weight: 600; }
+
+        /* Sekcja streamingów "Posłuchaj" */
+        .listen-header {
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #70757a;
+            margin-top: 16px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .listen-grid {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .listen-pill {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #3c4043;
+            cursor: pointer;
+            width: 25%;
+        }
+
+        .listen-icon-mock {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: #fff;
+        }
+
+        /* Dolny próbnik koloru w rogu pulpitu */
+        .picker-container {
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            background-color: #303134;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .picker-input { position: absolute; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="left-controls" onclick="showDashboard()">
+            <div class="brand-name-top">🐆 VeloBrowser</div>
+        </div>
+        <button class="incognito-btn">🕵️ Tryb Incognito</button>
+    </div>
+
+    <div class="main-content" id="bg-layer">
+        
+        <div id="dashboard-view">
+            <div class="brand">
+                <div class="brand-mascot">🐆</div>
+                <h1>VeloBrowser</h1>
+            </div>
+
+            <div class="search-area">
+                <div class="search-box">
+                    <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="shortcuts-grid" id="shortcuts-grid"></div>
+
+            <div class="history-box">
+                <div class="history-header">
+                    <span>🕒 HISTORIA WYSZUKIWANIA</span>
+                    <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
+                </div>
+                <div class="history-items" id="hist-list"></div>
+            </div>
+        </div>
+
+        <div id="results-view">
+            <div class="google-nav-strip">
+                <div class="google-nav-item active">Wszystko</div>
+                <div class="google-nav-item">Grafika</div>
+                <div class="google-nav-item">Wideo</div>
+                <div class="google-nav-item">Krótkie filmy</div>
+                <div class="google-nav-item">Wiadomości</div>
+            </div>
+
+            <div class="google-results-container">
+                
+                <div class="google-left-content">
+                    
+                    <div class="google-section-title">Grafika</div>
+                    
+                    <div class="google-images-row">
+                        <div class="google-image-card">
+                            <div class="google-img-box" style="background-image: url('https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=300');"></div>
+                            <div class="google-img-text-box">
+                                <div class="google-img-title" id="img-t1">Kiefer - AAAAAA</div>
+                                <div class="google-img-source">📺 YouTube</div>
+                            </div>
+                        </div>
+                        <div class="google-image-card">
+                            <div class="google-img-box" style="background-image: url('https://images.unsplash.com/photo-1531747118685-ca8fa6e08806?w=300');"></div>
+                            <div class="google-img-text-box">
+                                <div class="google-img-title" id="img-t2">Aaaaa by Jesseisnotnice</div>
+                                <div class="google-img-source">🎵 Amazon Music</div>
+                            </div>
+                        </div>
+                        <div class="google-image-card">
+                            <div class="google-img-box" style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300');"></div>
+                            <div class="google-img-text-box">
+                                <div class="google-img-title" id="img-t3">Aaaaa GIF - Discover</div>
+                                <div class="google-img-source">🎬 Tenor</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="google-more-images-btn">Pokaż więcej obrazów ▾</button>
+
+                    <div class="google-section-title" style="font-size: 18px; margin-bottom: 4px;">Więcej pytań</div>
+                    <div class="google-accordion-box">
+                        <div class="accordion-row" id="ac1">Co oznacza skrót AAAA?</div>
+                        <div class="accordion-row" id="ac2">Jak się pisze aaaaah?</div>
+                        <div class="accordion-row" id="ac3">Co oznacza aaah?</div>
+                    </div>
+
+                </div>
+
+                <div class="google-right-sidebar">
+                    <div class="sidebar-title-row">
+                        <h2 id="side-main-title">AAAAA</h2>
+                    </div>
+                    <div class="sidebar-subtitle" id="side-sub-title">Utwór · Kiefer Shackelford · 2018</div>
+
+                    <div class="sidebar-player" style="background-image: url('https://images.unsplash.com/photo-1516280440614-37939bbacd6a?w=400');">
+                        <div class="player-play-btn">▶</div>
+                        <div class="player-timestamp">3:42</div>
+                    </div>
+
+                    <div class="sidebar-meta-row" id="m-row1"><strong>Wykonawca:</strong> Kiefer Shackelford</div>
+                    <div class="sidebar-meta-row" id="m-row2"><strong>Album:</strong> Happysad</div>
+                    <div class="sidebar-meta-row" id="m-row3"><strong>Data wydania:</strong> 2018</div>
+
+                    <div class="listen-header">Posłuchaj</div>
+                    <div class="listen-grid">
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:red">📺</div>
+                            <span>YouTube Music</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:green">🎵</div>
+                            <span>Spotify</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:deeppink">🍎</div>
+                            <span>Apple Music</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:purple">🎧</div>
+                            <span>Deezer</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="picker-container" id="picker-ui">
+            🎨
+            <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
+        </div>
+    </div>
+
+    <script>
+        let historyData = [];
+        let tiles = [
+            { name: "Discord", url: "https://discord.com", icon: "💬" },
+            { name: "YouTube", url: "https://youtube.com", icon: "📺" }
+        ];
+
+        window.onload = function() {
+            try {
+                const h = localStorage.getItem('v_hist'); if (h) historyData = JSON.parse(h);
+                const t = localStorage.getItem('v_tiles'); if (t) tiles = JSON.parse(t);
+                const c = localStorage.getItem('v_bg'); if (c) changeBg(c);
+            } catch(e) {}
+            renderHistory();
+            renderTiles();
+        };
+
+        function changeBg(hex) {
+            document.getElementById('bg-layer').style.backgroundColor = hex;
+            try { localStorage.setItem('v_bg', hex); } catch(e) {}
+        }
+
+        function handleEnter(e) {
+            if (e.key === 'Enter') {
+                processSearch(e.target.value);
+            }
+        }
+
+        /* PŁYNNA TRANSFORMAACJA WYNIKÓW */
+        function processSearch(val) {
+            if (!val.trim()) return;
+
+            // Zapis do historii
+            historyData = historyData.filter(x => x !== val);
+            historyData.unshift(val);
+            if(historyData.length > 5) historyData.pop();
+            renderHistory();
+            try { localStorage.setItem('v_hist', JSON.stringify(historyData)); } catch(e) {}
+
+            // Przełączanie widoków
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('picker-ui').style.display = 'none';
+            document.getElementById('results-view').style.display = 'block';
+
+            // DYNAMICZNE DOPASOWANIE TEKSTÓW DO WPISANEJ FRAZY (JAK NA TWOIM SCREENIE)
+            const up = val.toUpperCase();
+            
+            // Lewa kolumna
+            document.getElementById('img-t1').innerText = `${val} - Trend`;
+            document.getElementById('img-t2').innerText = `${val} by Jesseisnotnice`;
+            document.getElementById('img-t3').innerText = `${val} GIF - Discover`;
+
+            document.getElementById('ac1').innerText = `Co oznacza skrót ${up}?`;
+            document.getElementById('ac2').innerText = `Jak się pisze ${val}ah?`;
+            document.getElementById('ac3').innerText = `Co oznacza zwrot ${val}?`;
+
+            // Prawy boczny panel panel
+            document.getElementById('side-main-title').innerText = up;
+            document.getElementById('side-sub-title').innerText = `Zapytanie · ${val} info · 2026`;
+            document.getElementById('m-row1').innerHTML = `<strong>Szukana fraza:</strong> ${val}`;
+            document.getElementById('m-row2').innerHTML = `<strong>Kategoria:</strong> Wyniki VeloBrowser`;
+            document.getElementById('m-row3').innerHTML = `<strong>Status AI:</strong> Wyłączone (100% czysty kod)`;
+        }
+
+        function showDashboard() {
+            document.getElementById('results-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+            document.getElementById('picker-ui').style.display = 'flex';
+            document.getElementById('search-in').value = '';
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('hist-list'); list.innerHTML = '';
+            if (historyData.length === 0) { list.innerHTML = '<div style="font-size:12px; opacity:0.4;">Brak wpisów</div>'; return; }
+            historyData.forEach((item, idx) => {
+                list.innerHTML += `
+                    <div class="history-row">
+                        <span class="history-text" onclick="document.getElementById('search-in').value='${item}'; processSearch('${item}')">🔍 ${item}</span>
+                        <span class="history-del" onclick="deleteHistory(${idx})">❌</span>
+                    </div>
+                `;
+            });
+        }
+
+        function deleteHistory(idx) {
+            historyData.splice(idx, 1); renderHistory();
+            try { localStorage.setItem('v_hist', JSON.stringify(historyData)); } catch(e) {}
+        }
+
+        function clearHistory() {
+            historyData = []; renderHistory();
+            try { localStorage.removeItem('v_hist'); } catch(e) {}
+        }
+
+        function renderTiles() {
+            const grid = document.getElementById('shortcuts-grid'); grid.innerHTML = '';
+            tiles.forEach((tile, index) => {
+                grid.innerHTML += `
+                    <div class="tile-wrapper">
+                        <button class="tile-delete-btn" onclick="deleteTile(${index})">❌</button>
+                        <a href="${tile.url}" target="_blank" class="tile">
+                            <div class="tile-icon">${tile.icon}</div>
+                            <div>${tile.name}</div>
+                        </a>
+                    </div>
+                `;
+            });
+            grid.innerHTML += `
+                <div class="tile-wrapper" onclick="addTile()">
+                    <div class="tile"><div class="tile-icon">➕</div><div>Dodaj</div></div>
+                </div>
+            `;
+        }
+
+        function addTile() {
+            const name = prompt("Nazwa:"); if (!name) return;
+            let url = prompt("URL:"); if (!url) return;
+            if (!url.startsWith('http')) url = 'https://' + url;
+            tiles.push({ name, url, icon: "🌐" }); renderTiles();
+            try { localStorage.setItem('v_tiles', JSON.stringify(tiles)); } catch(e) {}
+        }
+
+        function deleteTile(idx) {
+            tiles.splice(idx, 1); renderTiles();
+            try { localStorage.setItem('v_tiles', JSON.stringify(tiles)); } catch(e) {}
+        }
+    </script>
+</body>
+</html>
