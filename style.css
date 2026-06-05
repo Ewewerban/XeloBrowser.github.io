@@ -1,4 +1,4 @@
-/* RESET I GŁÓWNA STRUKTURA BODY */
+/* RESET I STRUKTURA GŁÓWNA */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -117,10 +117,11 @@ body {
     padding: 14px 20px 14px 48px;
     border-radius: 24px;
     border: 1px solid #5f6368;
-    background-color: #202124;
+    background-color: rgba(255, 255, 255, 0.05);
     color: #ffffff;
     font-size: 16px;
     outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .search-box input:focus {
@@ -273,10 +274,10 @@ body {
     opacity: 1;
 }
 
-/* ================= WIDOK 2: WYNIKI WYSZUKIWANIA ================= */
+/* ================= WIDOK 2: WYNIKI WYSZUKIWANIA (BIAŁE GOOGLE) ================= */
 #results-view {
     display: none;
-    background-color: #ffffff; /* Izolowane tło wewnątrz kontenera wyników */
+    background-color: #ffffff; /* Izolowane białe tło dla czytelności wyników Google */
     color: #202124;
     flex: 1;
     width: 100%;
@@ -341,7 +342,7 @@ body {
     margin-bottom: 12px;
 }
 
-/* KAFELKI GRAFIKI W STYLU GOOGLE */
+/* SEKCJA GRAFIKI GOOGLE */
 .google-images-row {
     display: flex;
     gap: 8px;
@@ -463,7 +464,7 @@ body {
     color: #202124;
 }
 
-/* BOCZNY PANEL WIEDZY (KNOWLEDGE PANEL) */
+/* KARTA WIEDZY (PANEL BOCZNY) */
 .google-right-sidebar {
     width: 368px;
     border: 1px solid #dadce0;
