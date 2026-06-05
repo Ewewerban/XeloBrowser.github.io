@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xelo Browser</title>
+    <title>XeloBrowser</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="main-body">
+<body>
 
     <div class="top-bar">
         <div class="left-controls" onclick="refreshPage()">
-            <div class="brand-name-top">🐆 Xelo Browser</div>
+            <div class="brand-name-top">🐆 XeloBrowser</div>
         </div>
         <button class="incognito-btn">Tryb Incognito</button>
     </div>
@@ -21,12 +21,12 @@
             <div class="brand-mascot-container">
                 <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Gepard" class="brand-mascot-img">
             </div>
-            <h1>Xelo Browser</h1>
+            <h1>XeloBrowser</h1>
         </div>
 
         <div class="search-area">
             <div class="search-box">
-                <input type="text" id="search-in" placeholder="Wyszukaj w sieci..." onkeydown="handleEnter(event)" autocomplete="off" autofocus>
+                <input type="text" id="search-in" placeholder="Wyszukaj w sieci przez Google..." onkeydown="handleEnter(event)" autocomplete="off" autofocus>
             </div>
         </div>
 
@@ -39,10 +39,6 @@
             </div>
             <div class="history-items" id="hist-list"></div>
         </div>
-
-        <div class="picker-container">
-            <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
-        </div>
     </div>
 
     <script>
@@ -53,20 +49,20 @@
             { name: "GitHub", url: "https://github.com", icon: "🐙" }
         ];
 
+        // Sprawdzenie 1: Poprawne ładowanie danych z pamięci podręcznej (LocalStorage/Cookies)
         window.onload = function() {
             try {
-                const h = localStorage.getItem('x_hist'); if (h) historyData = JSON.parse(h);
-                const t = localStorage.getItem('x_tiles'); if (t) tiles = JSON.parse(t);
-                const c = localStorage.getItem('x_bg'); if (c) changeBg(c);
-            } catch(e) {}
+                const storedHistory = localStorage.getItem('x_hist');
+                if (storedHistory) historyData = JSON.parse(storedHistory);
+
+                const storedTiles = localStorage.getItem('x_tiles');
+                if (storedTiles) tiles = JSON.parse(storedTiles);
+            } catch(e) {
+                console.error("Błąd pamięci lokalnej (Cookies/LocalStorage):", e);
+            }
             renderHistory();
             renderTiles();
         };
-
-        function changeBg(hex) {
-            document.getElementById('main-body').style.backgroundColor = hex;
-            try { localStorage.setItem('x_bg', hex); } catch(e) {}
-        }
 
         function handleEnter(e) {
             if (e.key === 'Enter') {
@@ -74,34 +70,37 @@
             }
         }
 
-        // TA FUNKCJA OTWIERA PRAWDZIWE GOOGLE Z WPISANĄ FRAZĄ
+        // Sprawdzenie 2: Przekierowanie do prawdziwego Google na tej samej karcie (obsługa WebView2)
         function searchInGoogle(rawQuery) {
             const query = rawQuery.trim();
             if (!query) return;
 
-            // Zapis do historii lokalnej
+            // Zapis do lokalnej historii wyszukiwania przed wyjściem ze strony
             historyData = historyData.filter(x => x !== query);
             historyData.unshift(query);
             if(historyData.length > 5) historyData.pop();
-            renderHistory();
-            try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
+            
+            try { 
+                localStorage.setItem('x_hist', JSON.stringify(historyData)); 
+            } catch(e) {}
 
-            // Przekierowanie do prawdziwego Google w nowej karcie
-            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-            window.open(googleUrl, '_blank');
-
-            // Czyszczenie inputa po wyszukiwaniu
-            document.getElementById('search-in').value = '';
+            // Przejście pod adres wyszukiwarki Google
+            window.location.href = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
         }
 
         function refreshPage() {
-            document.getElementById('search-in').value = '';
             window.location.reload();
         }
 
         function renderHistory() {
-            const list = document.getElementById('hist-list'); list.innerHTML = '';
-            if (historyData.length === 0) { list.innerHTML = '<div class="empty-history">Brak ostatnich wyszukiwań</div>'; return; }
+            const list = document.getElementById('hist-list'); 
+            list.innerHTML = '';
+            
+            if (historyData.length === 0) { 
+                list.innerHTML = '<div class="empty-history">Brak ostatnich wyszukiwań</div>'; 
+                return; 
+            }
+            
             historyData.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="history-row">
@@ -113,45 +112,59 @@
         }
 
         function deleteHistory(idx) {
-            historyData.splice(idx, 1); renderHistory();
+            historyData.splice(idx, 1);
+            renderHistory();
             try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
         }
 
         function clearHistory() {
-            historyData = []; renderHistory();
+            historyData = [];
+            renderHistory();
             try { localStorage.removeItem('x_hist'); } catch(e) {}
         }
 
         function renderTiles() {
-            const grid = document.getElementById('shortcuts-grid'); grid.innerHTML = '';
+            const grid = document.getElementById('shortcuts-grid'); 
+            grid.innerHTML = '';
+            
             tiles.forEach((tile, index) => {
                 grid.innerHTML += `
                     <div class="tile-wrapper">
                         <button class="tile-delete-btn" onclick="deleteTile(${index})">×</button>
-                        <a href="${tile.url}" target="_blank" class="tile">
+                        <a href="${tile.url}" class="tile">
                             <div class="tile-icon">${tile.icon}</div>
                             <div class="tile-name-txt">${tile.name}</div>
                         </a>
                     </div>
                 `;
             });
+            
             grid.innerHTML += `
                 <div class="tile-wrapper" onclick="addTile()">
-                    <div class="tile"><div class="tile-icon">＋</div><div class="tile-name-txt">Dodaj</div></div>
+                    <div class="tile">
+                        <div class="tile-icon tile-add">＋</div>
+                        <div class="tile-name-txt">Dodaj</div>
+                    </div>
                 </div>
             `;
         }
 
         function addTile() {
-            const name = prompt("Wpisz nazwę skrótu:"); if (!name) return;
-            let url = prompt("Wpisz adres URL:"); if (!url) return;
+            const name = prompt("Wpisz nazwę skrótu:"); 
+            if (!name) return;
+            let url = prompt("Wpisz adres URL:"); 
+            if (!url) return;
+            
             if (!url.startsWith('http')) url = 'https://' + url;
-            tiles.push({ name, url, icon: "🌐" }); renderTiles();
+            
+            tiles.push({ name, url, icon: "🌐" }); 
+            renderTiles();
             try { localStorage.setItem('x_tiles', JSON.stringify(tiles)); } catch(e) {}
         }
 
         function deleteTile(idx) {
-            tiles.splice(idx, 1); renderTiles();
+            tiles.splice(idx, 1); 
+            renderTiles();
             try { localStorage.setItem('x_tiles', JSON.stringify(tiles)); } catch(e) {}
         }
     </script>
