@@ -22,7 +22,7 @@
             overflow-x: hidden;
         }
 
-        /* Górny panel */
+        /* Górny panel funkcyjny */
         .top-bar {
             display: flex;
             align-items: center;
@@ -50,6 +50,8 @@
             font-weight: 600;
             font-size: 15px;
             letter-spacing: -0.3px;
+            cursor: pointer;
+            user-select: none;
         }
 
         .incognito-btn {
@@ -69,7 +71,7 @@
             border-color: rgba(255, 255, 255, 0.4);
         }
 
-        /* Główny kontener */
+        /* Główny kontener strony */
         .main-content {
             flex: 1;
             display: flex;
@@ -78,6 +80,15 @@
             justify-content: center;
             padding: 20px;
             position: relative;
+        }
+
+        /* Widok główny (Pulpit / Dashboard) */
+        #dashboard-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
 
         .brand {
@@ -99,7 +110,7 @@
             user-select: none;
         }
 
-        /* Wyszukiwarka */
+        /* Wyszukiwarka i bezpieczne podpowiedzi */
         .search-area {
             width: 100%;
             max-width: 560px;
@@ -169,7 +180,7 @@
             color: white;
         }
 
-        /* Skróty (Kafelki) */
+        /* Skróty (Kafelki) z funkcją usuwania */
         .shortcuts-grid {
             display: flex;
             flex-wrap: wrap;
@@ -179,14 +190,19 @@
             margin-bottom: 35px;
         }
 
+        .tile-wrapper {
+            position: relative;
+            width: 80px;
+        }
+
         .tile {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
             color: inherit;
-            width: 80px;
             cursor: pointer;
+            width: 100%;
         }
 
         .tile-icon {
@@ -204,7 +220,7 @@
             transition: transform 0.2s, background-color 0.2s;
         }
 
-        .tile:hover .tile-icon {
+        .tile-wrapper:hover .tile-icon {
             transform: translateY(-4px);
             background-color: #3c4043;
             border-color: rgba(255, 255, 255, 0.15);
@@ -220,7 +236,37 @@
             opacity: 0.85;
         }
 
-        /* Panel Historii */
+        /* Czerwony przycisk usuwania kafelka */
+        .tile-delete-btn {
+            position: absolute;
+            top: -6px;
+            right: 2px;
+            background-color: #ea4335;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .tile-delete-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .tile-wrapper:hover .tile-delete-btn {
+            opacity: 1;
+        }
+
+        /* Panel Historii wyszukiwania */
         .history-box {
             width: 100%;
             max-width: 440px;
@@ -243,7 +289,9 @@
         .history-clear {
             cursor: pointer;
             color: #ff9400;
+            transition: opacity 0.2s;
         }
+        .history-clear:hover { opacity: 0.8; }
 
         .history-items {
             display: flex;
@@ -261,24 +309,94 @@
             background-color: rgba(255, 255, 255, 0.04);
             padding: 8px 14px;
             border-radius: 8px;
-            text-align: left;
         }
 
         .history-text {
             cursor: pointer;
             flex: 1;
+            text-align: left;
         }
-
         .history-text:hover { text-decoration: underline; color: #ff9400; }
 
         .history-del {
             cursor: pointer;
             opacity: 0.4;
             padding-left: 10px;
+            transition: opacity 0.2s;
         }
         .history-del:hover { opacity: 1; }
 
-        /* Próbnik koloru */
+        /* AUTORSKI SYSTEM WYNIKÓW WYSZUKIWANIA XELO (ZAMIAST GOOGLE) */
+        #results-view {
+            display: none;
+            width: 100%;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 10px 20px 40px 20px;
+            text-align: left;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .results-header-info {
+            font-size: 14px;
+            color: #bdc1c6;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .search-card {
+            background-color: #2b2c2f;
+            padding: 22px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: border-color 0.2s;
+        }
+
+        .search-card:hover {
+            border-color: rgba(255, 148, 0, 0.3);
+        }
+
+        .search-card .site-url {
+            font-size: 12px;
+            color: #9aa0a6;
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 0.2px;
+        }
+
+        .search-card h3 {
+            font-size: 20px;
+            color: #8ab4f8;
+            font-weight: 500;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .search-card h3:hover {
+            text-decoration: underline;
+        }
+
+        .search-card p {
+            font-size: 14px;
+            color: #bdc1c6;
+            line-height: 1.5;
+        }
+
+        /* Próbnik koloru tła */
         .picker-container {
             position: absolute;
             left: 20px;
@@ -304,7 +422,7 @@
             cursor: pointer;
         }
 
-        /* OKNO COOKIES */
+        /* MODAL COOKIES */
         .cookie-backdrop {
             position: fixed;
             top: 0;
@@ -364,15 +482,20 @@
             cursor: pointer;
             transition: transform 0.1s;
         }
+        .c-btn:active { transform: scale(0.95); }
 
         .c-accept { background-color: #ff9400; color: #111; }
         .c-deny { background-color: #4f5357; color: white; }
 
+        /* Stylizacja trybu Incognito */
         body.incognito-mode {
             background-color: #15101c !important;
         }
         body.incognito-mode .top-bar {
             background-color: #0c0910;
+        }
+        body.incognito-mode .search-card:hover {
+            border-color: rgba(138, 180, 248, 0.4);
         }
     </style>
 </head>
@@ -380,33 +503,41 @@
 
     <div class="top-bar">
         <div class="left-controls">
-            <div class="mascot-logo" onclick="alert('Xelo Browser – Cheetah Edition v3.5')">🐆</div>
-            <div class="brand-name-top">Xelo Browser</div>
+            <div class="mascot-logo" onclick="showDashboard()">🐆</div>
+            <div class="brand-name-top" onclick="showDashboard()">Xelo Browser</div>
         </div>
         <button class="incognito-btn" id="incog-toggle" onclick="toggleIncognito()">🕵️ Tryb Incognito</button>
     </div>
 
     <div class="main-content" id="bg-layer">
-        <div class="brand">
-            <div class="brand-mascot">🐆</div>
-            <h1 id="brand-text">Xelo Browser</h1>
+        
+        <div id="dashboard-view">
+            <div class="brand">
+                <div class="brand-mascot">🐆</div>
+                <h1 id="brand-text">Xelo Browser</h1>
+            </div>
+
+            <div class="search-area">
+                <div class="search-box">
+                    <input type="text" id="search-in" placeholder="Wyszukaj w Xelo..." onkeydown="handleEnter(event)" oninput="getSafeSuggestions(this.value)" autocomplete="off">
+                </div>
+                <div class="suggestions-list" id="sug-box"></div>
+            </div>
+
+            <div class="shortcuts-grid" id="shortcuts-grid"></div>
+
+            <div class="history-box">
+                <div class="history-header">
+                    <span>🕒 HISTORIA WYSZUKIWANIA XELO</span>
+                    <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
+                </div>
+                <div class="history-items" id="hist-list"></div>
+            </div>
         </div>
 
-        <div class="search-area">
-            <div class="search-box">
-                <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" oninput="getSafeSuggestions(this.value)" autocomplete="off">
-            </div>
-            <div class="suggestions-list" id="sug-box"></div>
-        </div>
-
-        <div class="shortcuts-grid" id="shortcuts-grid"></div>
-
-        <div class="history-box">
-            <div class="history-header">
-                <span>🕒 HISTORIA WYSZUKIWANIA</span>
-                <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
-            </div>
-            <div class="history-items" id="hist-list"></div>
+        <div id="results-view">
+            <div class="results-header-info" id="results-stats">Wyniki wyszukiwania w Xelo Browser</div>
+            <div class="results-container" id="results-list"></div>
         </div>
 
         <div class="picker-container">
@@ -431,6 +562,7 @@
         let storageAllowed = false;
         let incognito = false;
         
+        // Domyślna baza kafelków
         let tiles = [
             { name: "Discord", url: "https://discord.com", icon: "💬" },
             { name: "YouTube", url: "https://youtube.com", icon: "📺" },
@@ -439,14 +571,9 @@
         ];
         
         let historyData = [];
-        
-        // Bogata i stabilna lokalna baza inteligentnych podpowiedzi
-        const popularPhrases = [
-            "discord", "youtube", "minecraft wiki", "allegro", "facebook", 
-            "roblox", "gry online", "pogoda", "tłumacz google", "github", 
-            "twitch", "wikipedia", "netflix", "poczta", "onet", "wp", "interia"
-        ];
+        const popularPhrases = ["discord", "youtube", "minecraft wiki", "allegro", "facebook", "roblox", "gry online", "pogoda", "github", "twitch"];
 
+        // Start strony i bezpieczna weryfikacja LocalStorage
         window.onload = function() {
             try {
                 const consent = localStorage.getItem('xelo_consent');
@@ -496,21 +623,27 @@
             }
         }
 
+        /* GENEROWANIE I ZARZĄDZANIE KAFELKAMI */
         function renderTiles() {
             const grid = document.getElementById('shortcuts-grid');
             grid.innerHTML = '';
-            tiles.forEach(tile => {
+            tiles.forEach((tile, index) => {
                 grid.innerHTML += `
-                    <a href="${tile.url}" target="_blank" class="tile">
-                        <div class="tile-icon">${tile.icon}</div>
-                        <div class="tile-label">${tile.name}</div>
-                    </a>
+                    <div class="tile-wrapper">
+                        <button class="tile-delete-btn" onclick="deleteTile(${index}, event)">❌</button>
+                        <a href="${tile.url}" target="_blank" class="tile">
+                            <div class="tile-icon">${tile.icon}</div>
+                            <div class="tile-label">${tile.name}</div>
+                        </a>
+                    </div>
                 `;
             });
             grid.innerHTML += `
-                <div class="tile" onclick="addTile()">
-                    <div class="tile-icon">➕</div>
-                    <div class="tile-label">Dodaj</div>
+                <div class="tile-wrapper" onclick="addTile()">
+                    <div class="tile">
+                        <div class="tile-icon">➕</div>
+                        <div class="tile-label">Dodaj</div>
+                    </div>
                 </div>
             `;
         }
@@ -528,6 +661,15 @@
             saveTiles();
         }
 
+        /* FUNKCJA USUWANIA KAFELKA */
+        function deleteTile(index, event) {
+            event.preventDefault();
+            event.stopPropagation(); // Blokuje kliknięcie w link podczas usuwania
+            tiles.splice(index, 1);
+            renderTiles();
+            saveTiles();
+        }
+
         function saveTiles() {
             if (storageAllowed && !incognito) {
                 try { localStorage.setItem('xelo_tiles', JSON.stringify(tiles)); } catch(e) {}
@@ -537,12 +679,14 @@
         function handleEnter(e) {
             if (e.key === 'Enter') {
                 document.getElementById('sug-box').style.display = 'none';
-                triggerSearch(e.target.value);
+                generateXeloResults(e.target.value);
             }
         }
 
-        function triggerSearch(val) {
+        /* AUTORSKI GENERATOR WYNIKÓW WYSZUKIWANIA W INTERFEJSIE XELO */
+        function generateXeloResults(val) {
             if (!val.trim()) return;
+
             if (!incognito) {
                 historyData = historyData.filter(i => i !== val);
                 historyData.unshift(val);
@@ -552,9 +696,47 @@
                     try { localStorage.setItem('xelo_hist', JSON.stringify(historyData)); } catch(e) {}
                 }
             }
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(val)}`, '_blank');
+
+            // Płynne ukrywanie pulpitu i ładowanie kart wyszukiwarki
+            document.getElementById('dashboard-view').style.display = 'none';
+            const resultsView = document.getElementById('results-view');
+            resultsView.style.display = 'block';
+
+            document.getElementById('results-stats').innerText = `Wyniki wyszukiwania w Xelo Browser dla frazy: "${val}" (Całkowicie bez modułów AI)`;
+
+            // Przetwarzanie frazy do formatu czystego linku
+            const cleanSlug = val.toLowerCase().replace(/\s+/g, '');
+
+            const list = document.getElementById('results-list');
+            list.innerHTML = `
+                <div class="search-card">
+                    <span class="site-url">https://${cleanSlug}.pl</span>
+                    <h3 onclick="window.open('https://google.com/search?q=${encodeURIComponent(val)}&udm=14', '_blank')">Oficjalna strona internetowa: ${val}</h3>
+                    <p>Przejdź bezpośrednio do zweryfikowanego portalu dla zapytania "${val}". Szybkie ładowanie, czysty kod źródłowy, brak reklam śledzących oraz generowanych automatycznie podsumowań AI.</p>
+                </div>
+
+                <div class="search-card">
+                    <span class="site-url">https://pl.wikipedia.org/wiki/${encodeURIComponent(val)}</span>
+                    <h3 onclick="window.open('https://pl.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(val)}', '_blank')">${val} – Encyklopedia Wikipedia</h3>
+                    <p>Przeczytaj rzetelne, tworzone przez ludzi artykuły naukowe oraz historyczne na temat "${val}". Sprawdzone źródła, pełna bibliografia i zero halucynacji algorytmów sztucznej inteligencji.</p>
+                </div>
+
+                <div class="search-card">
+                    <span class="site-url">https://youtube.com/results?search_query=${cleanSlug}</span>
+                    <h3 onclick="window.open('https://www.youtube.com/results?search_query=${encodeURIComponent(val)}', '_blank')">Materiały wideo i poradniki dla "${val}" na YouTube</h3>
+                    <p>Oglądaj najnowsze recenzje, transmisje na żywo, podcasty oraz gameplaye powiązane bezpośrednio z tematyką "${val}" w najwyższej jakości wideo.</p>
+                </div>
+            `;
         }
 
+        // Powrót do pulpitu głównego
+        function showDashboard() {
+            document.getElementById('results-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'flex';
+            document.getElementById('search-in').value = '';
+        }
+
+        /* PANEL HISTORII WYSZUKIWANIA */
         function renderHistory() {
             const list = document.getElementById('hist-list');
             list.innerHTML = '';
@@ -565,7 +747,7 @@
             historyData.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="history-row">
-                        <span class="history-text" onclick="triggerSearch('${item}')">🔍 ${item}</span>
+                        <span class="history-text" onclick="generateXeloResults('${item}')">🔍 ${item}</span>
                         <span class="history-del" onclick="delHist(${idx})">❌</span>
                     </div>
                 `;
@@ -588,13 +770,12 @@
             }
         }
 
-        /* CALKOWICIE BEZPIECZNE I SZYBKIE PODPOWIEDZI */
+        /* BEZPIECZNE PODPOWIEDZI LOKALNE (BEZ BLOKOWANIA STRONY PRZEZ CSP) */
         function getSafeSuggestions(val) {
             const box = document.getElementById('sug-box');
             if (!val.trim()) { box.style.display = 'none'; return; }
 
             const query = val.toLowerCase();
-            // Łączymy historię użytkownika ze stałymi frazami, eliminując powtórzenia
             const matches = [...new Set([...historyData, ...popularPhrases])]
                 .filter(item => item.toLowerCase().includes(query))
                 .slice(0, 5);
@@ -609,13 +790,14 @@
                 d.onclick = () => {
                     document.getElementById('search-in').value = txt;
                     box.style.display = 'none';
-                    triggerSearch(txt);
+                    generateXeloResults(txt);
                 };
                 box.appendChild(d);
             });
             box.style.display = 'flex';
         }
 
+        /* TRYB INCOGNITO */
         function toggleIncognito() {
             incognito = !incognito;
             document.body.classList.toggle('incognito-mode', incognito);
@@ -624,7 +806,7 @@
 
             if (incognito) {
                 btn.innerText = "🕵️ Tryb Incognito: WŁĄCZONY";
-                btn.style.borderColor = '#ff9400';
+                btn.style.borderColor = '#8ab4f8';
                 title.innerText = "Xelo Browser (Incognito)";
             } else {
                 btn.innerText = "🕵️ Tryb Incognito";
