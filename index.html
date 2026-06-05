@@ -3,29 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VeloBrowser</title>
+    <title>Xelo Browser</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div class="top-bar">
         <div class="left-controls" onclick="showDashboard()">
-            <div class="brand-name-top">🐆 VeloBrowser</div>
+            <div class="brand-name-top">🐆 Xelo Browser</div>
         </div>
-        <button class="incognito-btn">🕵️ Tryb Incognito</button>
+        <button class="incognito-btn">Tryb Incognito</button>
     </div>
 
     <div class="main-content" id="bg-layer">
         
         <div id="dashboard-view">
             <div class="brand">
-                <div class="brand-mascot">🐆</div>
-                <h1>VeloBrowser</h1>
+                <div class="brand-mascot-container">
+                    <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Leopard" class="brand-mascot-img">
+                </div>
+                <h1>XeloBrowser</h1>
             </div>
 
             <div class="search-area">
                 <div class="search-box">
-                    <input type="text" id="search-in" placeholder="Wyszukaj w sieci..." onkeydown="handleEnter(event)" autocomplete="off">
+                    <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" autocomplete="off">
                 </div>
             </div>
 
@@ -33,7 +35,7 @@
 
             <div class="history-box">
                 <div class="history-header">
-                    <span>🕒 HISTORIA WYSZUKIWANIA</span>
+                    <span>HISTORIA WYSZUKIWANIA</span>
                     <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
                 </div>
                 <div class="history-items" id="hist-list"></div>
@@ -46,8 +48,11 @@
                 <div class="google-nav-item active">Wszystko</div>
                 <div class="google-nav-item">Grafika</div>
                 <div class="google-nav-item">Wideo</div>
+                <div class="google-nav-item">Krótkie filmy</div>
                 <div class="google-nav-item">Wiadomości</div>
-                <div class="google-nav-item">Mapy</div>
+                <div class="google-nav-item">Sieć</div>
+                <div class="google-nav-item">Więcej ▾</div>
+                <div class="google-nav-item">Narzędzia</div>
             </div>
 
             <div class="google-results-container">
@@ -55,19 +60,49 @@
                 <div class="google-left-content">
                     <div class="search-meta-info" id="search-meta-info">Około 0 wyników (0,12 s)</div>
                     
-                    <div id="dynamic-results-list"></div>
+                    <div class="google-section-title">Grafika</div>
+                    <div class="google-images-row" id="dynamic-images-row"></div>
+                    <button class="google-more-images-btn">Pokaż więcej obrazów ▾</button>
+
+                    <div class="google-section-title" style="font-size: 18px; margin-top: 16px; margin-bottom: 8px;">Więcej pytań</div>
+                    <div class="google-accordion-box" id="dynamic-accordion-box"></div>
+
+                    <div class="google-section-title" style="font-size: 18px; margin-top: 24px; margin-bottom: 12px;">Wyniki z sieci</div>
+                    <div id="dynamic-text-results"></div>
                 </div>
 
                 <div class="google-right-sidebar" id="google-sidebar">
                     <div class="sidebar-title-row">
                         <h2 id="sidebar-term">Hasło</h2>
+                        <div class="sidebar-share-icon">⋮</div>
                     </div>
-                    <div class="sidebar-subtitle">Wyszukiwanie globalne</div>
-                    <div class="sidebar-meta-row">
-                        <strong>Definicja:</strong> <span id="sidebar-desc">Brak dodatkowych danych strukturalnych dla tego zapytania.</span>
+                    <div class="sidebar-subtitle" id="sidebar-sub-title">Temat wyszukiwania</div>
+
+                    <div class="sidebar-player" id="sidebar-media-bg">
+                        <div class="player-play-btn">▶</div>
+                        <div class="player-timestamp" id="sidebar-media-duration">2:30</div>
                     </div>
-                    <div class="sidebar-meta-row">
-                        <strong>Źródło:</strong> Indeksowanie sieci Web VeloBrowser
+
+                    <div id="sidebar-metadata-container"></div>
+
+                    <div class="listen-header">Posłuchaj / Znajdź w</div>
+                    <div class="listen-grid">
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:#ff0000;">📺</div>
+                            <span>YouTube</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:#1DB954;">🎵</div>
+                            <span>Spotify</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:#fc3c44;">🍎</div>
+                            <span>Apple Music</span>
+                        </div>
+                        <div class="listen-pill">
+                            <div class="listen-icon-mock" style="color:#a255ff;">🎧</div>
+                            <span>Deezer</span>
+                        </div>
                     </div>
                 </div>
 
@@ -75,7 +110,6 @@
         </div>
 
         <div class="picker-container" id="picker-ui">
-            🎨
             <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
         </div>
     </div>
@@ -90,9 +124,9 @@
 
         window.onload = function() {
             try {
-                const h = localStorage.getItem('v_hist'); if (h) historyData = JSON.parse(h);
-                const t = localStorage.getItem('v_tiles'); if (t) tiles = JSON.parse(t);
-                const c = localStorage.getItem('v_bg'); if (c) changeBg(c);
+                const h = localStorage.getItem('x_hist'); if (h) historyData = JSON.parse(h);
+                const t = localStorage.getItem('x_tiles'); if (t) tiles = JSON.parse(t);
+                const c = localStorage.getItem('x_bg'); if (c) changeBg(c);
             } catch(e) {}
             renderHistory();
             renderTiles();
@@ -100,81 +134,132 @@
 
         function changeBg(hex) {
             document.getElementById('bg-layer').style.backgroundColor = hex;
-            try { localStorage.setItem('v_bg', hex); } catch(e) {}
+            try { localStorage.setItem('x_bg', hex); } catch(e) {}
         }
 
         function handleEnter(e) {
             if (e.key === 'Enter') {
-                executeRealSearch(e.target.value);
+                executeDynamicSearch(e.target.value);
             }
         }
 
-        /* GŁÓWNY SILNIK GENEROWANIA NATURALNYCH WYNIKÓW WYSZUKIWANIA
-           Zamiast jednego sztywnego obrazka, funkcja buduje dynamiczną listę powiązanych klocków.
+        /* AUTENTYCZNY SILNIK GENEROWANIA WYNIKÓW
+          Buduje całą strukturę strony na podstawie wpisanej frazy użytkownika,
+          zapewniając naturalne i logiczne opisy.
         */
-        function executeRealSearch(query) {
-            if (!query.trim()) return;
+        function executeDynamicSearch(rawQuery) {
+            const query = rawQuery.trim();
+            if (!query) return;
 
-            // Zapis do historii wyszukiwania
+            // Aktualizacja i zapis historii użytkownika
             historyData = historyData.filter(x => x !== query);
             historyData.unshift(query);
             if(historyData.length > 5) historyData.pop();
             renderHistory();
-            try { localStorage.setItem('v_hist', JSON.stringify(historyData)); } catch(e) {}
+            try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
 
-            // Przełączenie interfejsu w czysty, biały widok wyników Google
+            // Przełączanie widoków pulpitu na białą kartę wyników Google
             document.getElementById('dashboard-view').style.display = 'none';
             document.getElementById('picker-ui').style.display = 'none';
             document.getElementById('results-view').style.display = 'block';
 
-            // Aktualizacja metadanych na panelu bocznym
-            document.getElementById('sidebar-term').innerText = query;
-            document.getElementById('sidebar-desc').innerText = `Wyszukano frazę "${query}" w bazie danych indeksu sieciowego. Zobacz powiązane wyniki po lewej stronie ekranu.`;
-            document.getElementById('search-meta-info').innerText = `Około ${Math.floor(Math.random() * 1400000) + 50000} wyników (0,24 s) dla zapytania: ${query}`;
+            // Czyszczenie i przygotowanie kontenerów HTML
+            const imagesRow = document.getElementById('dynamic-images-row');
+            const accordionBox = document.getElementById('dynamic-accordion-box');
+            const textResultsList = document.getElementById('dynamic-text-results');
+            const metadataContainer = document.getElementById('sidebar-metadata-container');
 
-            // Generowanie bazy dynamicznych wyników dopasowanych do słowa kluczowego
-            const resultsContainer = document.getElementById('dynamic-results-list');
-            resultsContainer.innerHTML = ''; // czyszczenie poprzedniego stanu
+            imagesRow.innerHTML = '';
+            accordionBox.innerHTML = '';
+            textResultsList.innerHTML = '';
+            metadataContainer.innerHTML = '';
 
-            // Szablon generatora wyników (Zupełnie jak w Google!)
-            const mockDatabase = [
+            // Wyświetlanie statystyk u góry strony
+            const randomCount = Math.floor(Math.random() * 8500000) + 120000;
+            const randomTime = (Math.random() * 0.4 + 0.1).toFixed(2);
+            document.getElementById('search-meta-info').innerText = `Około ${randomCount.toLocaleString('pl-PL')} wyników (${randomTime} s) dla zapytania: ${query}`;
+
+            // 1. GENEROWANIE KAFLI GRAFICZNYCH
+            const imgTemplates = [
+                { source: 'YouTube', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250' },
+                { source: 'Wikipedia', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=250' },
+                { source: 'Tenor', img: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=250' }
+            ];
+            imgTemplates.forEach((item, index) => {
+                imagesRow.innerHTML += `
+                    <div class="google-image-card">
+                        <div class="google-img-box" style="background-image: url('${item.img}');"></div>
+                        <div class="google-img-text-box">
+                            <div class="google-img-title">${query} - Archiwum fotograficzne i medialne</div>
+                            <div class="google-img-source">🌐 ${item.source}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // 2. GENEROWANIE SEKCJI "WIĘCEJ PYTAŃ"
+            const questions = [
+                `Co to jest dokładnie ${query}?`,
+                `Jak poprawnie interpretować hasło: ${query}?`,
+                `Skąd pochodzi i jakie ma znaczenie ${query}?`
+            ];
+            questions.forEach(q => {
+                accordionBox.innerHTML += `
+                    <div class="accordion-row">${q}</div>
+                `;
+            });
+
+            // 3. GENEROWANIE GŁÓWNYCH REZULTATÓW TEKSTOWYCH
+            const textDatabase = [
                 {
-                    title: `${query} – Najważniejsze informacje i wiadomości`,
-                    displayUrl: `https://www.onet.pl › wiadomosci › ${encodeURIComponent(query)}`,
-                    link: `https://www.onet.pl`,
-                    snippet: `Najświeższe informacje na temat <b>${query}</b>. Przeczytaj artykuły, analizy ekspertów, komentarze oraz dowiedz się więcej o najnowszych wydarzeniach z kraju i ze świata.`
+                    title: `${query} – Najważniejsze informacje, wiadomości i aktualności`,
+                    url: `https://www.onet.pl › wiadomosci › szukaj?q=${encodeURIComponent(query)}`,
+                    snippet: `Wszystko na temat <b>${query}</b>. Śledź najnowsze doniesienia prasowe, komentarze niezależnych publicystów, raporty oraz opinie ekspertów z branży.`
                 },
                 {
-                    title: `${query} w Wikipedii, wolnej encyklopedii`,
-                    displayUrl: `https://pl.wikipedia.org › wiki › ${encodeURIComponent(query)}`,
-                    link: `https://pl.wikipedia.org`,
-                    snippet: `<b>${query}</b> – definicja, historia, zastosowanie oraz najważniejsze koncepcje. Zobacz spis treści, powiązane artykuły naukowe oraz przypisy bibliograficzne.`
+                    title: `${query} – Encyklopedia Wikipedia, wolny słownik online`,
+                    url: `https://pl.wikipedia.org › wiki › ${encodeURIComponent(query)}`,
+                    snippet: `Artykuł omawia definicję pojęcia <b>${query}</b>, jego tło historyczne, najważniejsze ewolucje na przestrzeni ostatnich lat, a także powiązane zagadnienia systemowe.`
                 },
                 {
-                    title: `${query} - Filmy i materiały wideo w YouTube`,
-                    displayUrl: `https://www.youtube.com › wyniki?search_query=${encodeURIComponent(query)}`,
-                    link: `https://www.youtube.com`,
-                    snippet: `Ciesz się filmami i muzyką, które kochasz, przesyłaj oryginalne treści i udostępniaj je znajomym, rodzinie i całemu światu w serwisie YouTube na hasło <b>${query}</b>.`
+                    title: `${query} - Oficjalne materiały wideo i poradniki na YouTube`,
+                    url: `https://www.youtube.com › watch › search_results=${encodeURIComponent(query)}`,
+                    snippet: `Oglądaj najnowsze produkcje, kursy wideo krok po kroku oraz recenzje powiązane bezpośrednio z tematyką <b>${query}</b> w najwyższej jakości HD.`
                 },
                 {
-                    title: `Jak zacząć z ${query}? Poradnik dla początkujących`,
-                    displayUrl: `https://www.poradnik-sieciowy.pl › poradniki › ${encodeURIComponent(query)}`,
-                    link: `https://www.google.com`,
-                    snippet: `Zastanawiasz się, jak podejść do zagadnienia jakim jest <b>${query}</b>? W tym kompleksowym przewodniku krok po kroku wyjaśniamy podstawowe błędy i najlepsze praktyki.`
+                    title: `Jak skutecznie wykorzystać ${query} w codziennej pracy?`,
+                    url: `https://www.poradnik-sieciowy.pl › technologie › ${encodeURIComponent(query)}`,
+                    snippet: `Kompleksowy poradnik dedykowany dla osób rozpoczynających naukę o <b>${query}</b>. Sprawdź najlepsze praktyki, najpopularniejsze błędy i gotowe rozwiązania.`
                 }
             ];
-
-            // Renderowanie pętli do drzewa DOM
-            mockDatabase.forEach(res => {
-                resultsContainer.innerHTML += `
+            textDatabase.forEach(item => {
+                textResultsList.innerHTML += `
                     <div class="google-result-item">
                         <div class="res-url-row">
                             <span class="res-fav-mock">🌐</span>
-                            <span class="res-display-url">${res.displayUrl}</span>
+                            <span class="res-display-url">${item.url}</span>
                         </div>
-                        <a href="${res.link}" target="_blank" class="res-title">${res.title}</a>
-                        <div class="res-snippet">${res.snippet}</div>
+                        <a href="#" class="res-title" onclick="event.preventDefault();">${item.title}</a>
+                        <div class="res-snippet">${item.snippet}</div>
                     </div>
+                `;
+            });
+
+            // 4. AKTUALIZACJA BOCZNEGO PANELU WIEDZY (KNOWLEDGE PANEL)
+            document.getElementById('sidebar-term').innerText = query.charAt(0).toUpperCase() + query.slice(1);
+            document.getElementById('sidebar-sub-title').innerText = `Zapytanie globalne · Indeks sieci Xelo`;
+            document.getElementById('sidebar-media-bg').style.backgroundImage = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400')";
+            document.getElementById('sidebar-media-duration').innerText = `${Math.floor(Math.random() * 4) + 1}:${Math.floor(Math.random() * 50) + 10}`;
+
+            const metadata = [
+                { label: 'Główny identyfikator', value: query },
+                { label: 'Typ indeksu', value: 'Dynamiczny rekord tekstowo-graficzny' },
+                { label: 'Bezpieczeństwo', value: 'Zweryfikowane przez Xelo Browser Core' },
+                { label: 'Ostatnie logowanie bazy', value: 'Czerwiec 2026' }
+            ];
+            metadata.forEach(meta => {
+                metadataContainer.innerHTML += `
+                    <div class="sidebar-meta-row"><strong>${meta.label}:</strong> <span>${meta.value}</span></div>
                 `;
             });
         }
@@ -188,12 +273,12 @@
 
         function renderHistory() {
             const list = document.getElementById('hist-list'); list.innerHTML = '';
-            if (historyData.length === 0) { list.innerHTML = '<div style="font-size:12px; opacity:0.4; text-align:center; padding:10px;">Brak wpisów w historii</div>'; return; }
+            if (historyData.length === 0) { list.innerHTML = '<div class="empty-history">Brak ostatnich wyszukiwań</div>'; return; }
             historyData.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="history-row">
-                        <span class="history-text" onclick="document.getElementById('search-in').value='${item}'; executeRealSearch('${item}')">🔍 ${item}</span>
-                        <span class="history-del" onclick="deleteHistory(${idx})">❌</span>
+                        <span class="history-text" onclick="document.getElementById('search-in').value='${item}'; executeDynamicSearch('${item}')">🔍 ${item}</span>
+                        <span class="history-del" onclick="deleteHistory(${idx})">×</span>
                     </div>
                 `;
             });
@@ -201,12 +286,12 @@
 
         function deleteHistory(idx) {
             historyData.splice(idx, 1); renderHistory();
-            try { localStorage.setItem('v_hist', JSON.stringify(historyData)); } catch(e) {}
+            try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
         }
 
         function clearHistory() {
             historyData = []; renderHistory();
-            try { localStorage.removeItem('v_hist'); } catch(e) {}
+            try { localStorage.removeItem('x_hist'); } catch(e) {}
         }
 
         function renderTiles() {
@@ -214,7 +299,7 @@
             tiles.forEach((tile, index) => {
                 grid.innerHTML += `
                     <div class="tile-wrapper">
-                        <button class="tile-delete-btn" onclick="deleteTile(${index})">❌</button>
+                        <button class="tile-delete-btn" onclick="deleteTile(${index})">×</button>
                         <a href="${tile.url}" target="_blank" class="tile">
                             <div class="tile-icon">${tile.icon}</div>
                             <div class="tile-name-txt">${tile.name}</div>
@@ -224,22 +309,22 @@
             });
             grid.innerHTML += `
                 <div class="tile-wrapper" onclick="addTile()">
-                    <div class="tile"><div class="tile-icon">➕</div><div class="tile-name-txt">Dodaj</div></div>
+                    <div class="tile"><div class="tile-icon">＋</div><div class="tile-name-txt">Dodaj</div></div>
                 </div>
             `;
         }
 
         function addTile() {
-            const name = prompt("Nazwa skrótu:"); if (!name) return;
-            let url = prompt("Adres URL strony:"); if (!url) return;
+            const name = prompt("Wpisz nazwę skrótu:"); if (!name) return;
+            let url = prompt("Wpisz adres URL:"); if (!url) return;
             if (!url.startsWith('http')) url = 'https://' + url;
             tiles.push({ name, url, icon: "🌐" }); renderTiles();
-            try { localStorage.setItem('v_tiles', JSON.stringify(tiles)); } catch(e) {}
+            try { localStorage.setItem('x_tiles', JSON.stringify(tiles)); } catch(e) {}
         }
 
         function deleteTile(idx) {
             tiles.splice(idx, 1); renderTiles();
-            try { localStorage.setItem('v_tiles', JSON.stringify(tiles)); } catch(e) {}
+            try { localStorage.setItem('x_tiles', JSON.stringify(tiles)); } catch(e) {}
         }
     </script>
 </body>
