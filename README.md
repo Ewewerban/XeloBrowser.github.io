@@ -10,7 +10,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/Silnik-Chromium%20%2F%20WebView2-orange?style=flat-square" alt="Engine">
-  <img src="https://img.shields.io/badge/Motyw-Czarno--Pomara%C4%84czowy-orange?style=flat-square" alt="Theme">
+  <img src="https://img.shields.io/badge/Motyw-Czarno--Pomarańczowy-orange?style=flat-square" alt="Theme">
   <img src="https://img.shields.io/badge/Cookies%20%26%20Storage-Aktywne-brightgreen?style=flat-square" alt="Storage">
 </p>
 
