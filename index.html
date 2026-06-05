@@ -9,7 +9,7 @@
 <body id="main-body">
 
     <div class="top-bar">
-        <div class="left-controls" onclick="showDashboard()">
+        <div class="left-controls" onclick="refreshPage()">
             <div class="brand-name-top">🐆 Xelo Browser</div>
         </div>
         <button class="incognito-btn">Tryb Incognito</button>
@@ -17,99 +17,30 @@
 
     <div class="main-content">
         
-        <div id="dashboard-view">
-            <div class="brand">
-                <div class="brand-mascot-container">
-                    <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Leopard" class="brand-mascot-img">
-                </div>
-                <h1>Xelo Browser</h1>
+        <div class="brand">
+            <div class="brand-mascot-container">
+                <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Gepard" class="brand-mascot-img">
             </div>
+            <h1>Xelo Browser</h1>
+        </div>
 
-            <div class="search-area">
-                <div class="search-box">
-                    <input type="text" id="search-in" placeholder="Wyszukaj w Google..." onkeydown="handleEnter(event)" autocomplete="off">
-                </div>
-            </div>
-
-            <div class="shortcuts-grid" id="shortcuts-grid"></div>
-
-            <div class="history-box">
-                <div class="history-header">
-                    <span>HISTORIA WYSZUKIWANIA</span>
-                    <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
-                </div>
-                <div class="history-items" id="hist-list"></div>
+        <div class="search-area">
+            <div class="search-box">
+                <input type="text" id="search-in" placeholder="Wyszukaj w sieci..." onkeydown="handleEnter(event)" autocomplete="off" autofocus>
             </div>
         </div>
 
-        <div id="results-view">
-            
-            <div class="google-nav-strip">
-                <div class="google-nav-item active">Wszystko</div>
-                <div class="google-nav-item">Grafika</div>
-                <div class="google-nav-item">Wideo</div>
-                <div class="google-nav-item">Krótkie filmy</div>
-                <div class="google-nav-item">Wiadomości</div>
-                <div class="google-nav-item">Sieć</div>
-                <div class="google-nav-item">Więcej ▾</div>
-                <div class="google-nav-item">Narzędzia</div>
+        <div class="shortcuts-grid" id="shortcuts-grid"></div>
+
+        <div class="history-box">
+            <div class="history-header">
+                <span>HISTORIA WYSZUKIWANIA</span>
+                <span class="history-clear" onclick="clearHistory()">Wyczyść</span>
             </div>
-
-            <div class="google-results-container">
-                
-                <div class="google-left-content">
-                    <div class="search-meta-info" id="search-meta-info">Około 0 wyników (0,12 s)</div>
-                    
-                    <div class="google-section-title">Grafika</div>
-                    <div class="google-images-row" id="dynamic-images-row"></div>
-                    <button class="google-more-images-btn">Pokaż więcej obrazów ▾</button>
-
-                    <div class="google-section-title google-title-mid">Więcej pytań</div>
-                    <div class="google-accordion-box" id="dynamic-accordion-box"></div>
-
-                    <div class="google-section-title google-title-bottom">Wyniki z sieci</div>
-                    <div id="dynamic-text-results"></div>
-                </div>
-
-                <div class="google-right-sidebar" id="google-sidebar">
-                    <div class="sidebar-title-row">
-                        <h2 id="sidebar-term">Hasło</h2>
-                        <div class="sidebar-share-icon">⋮</div>
-                    </div>
-                    <div class="sidebar-subtitle" id="sidebar-sub-title">Temat wyszukiwania</div>
-
-                    <div class="sidebar-player" id="sidebar-media-bg">
-                        <div class="player-play-btn">▶</div>
-                        <div class="player-timestamp" id="sidebar-media-duration">2:30</div>
-                    </div>
-
-                    <div id="sidebar-metadata-container"></div>
-
-                    <div class="listen-header">Posłuchaj / Znajdź w</div>
-                    <div class="listen-grid">
-                        <div class="listen-pill">
-                            <div class="listen-icon-mock icon-yt">📺</div>
-                            <span>YouTube</span>
-                        </div>
-                        <div class="listen-pill">
-                            <div class="listen-icon-mock icon-spotify">🎵</div>
-                            <span>Spotify</span>
-                        </div>
-                        <div class="listen-pill">
-                            <div class="listen-icon-mock icon-apple">🍎</div>
-                            <span>Apple Music</span>
-                        </div>
-                        <div class="listen-pill">
-                            <div class="listen-icon-mock icon-deezer">🎧</div>
-                            <span>Deezer</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <div class="history-items" id="hist-list"></div>
         </div>
 
-        <div class="picker-container" id="picker-ui">
+        <div class="picker-container">
             <input type="color" class="picker-input" value="#202124" oninput="changeBg(this.value)">
         </div>
     </div>
@@ -132,7 +63,6 @@
             renderTiles();
         };
 
-        // Zmiana koloru aplikowana jest globalnie na element body
         function changeBg(hex) {
             document.getElementById('main-body').style.backgroundColor = hex;
             try { localStorage.setItem('x_bg', hex); } catch(e) {}
@@ -140,120 +70,33 @@
 
         function handleEnter(e) {
             if (e.key === 'Enter') {
-                executeDynamicSearch(e.target.value);
+                searchInGoogle(e.target.value);
             }
         }
 
-        function executeDynamicSearch(rawQuery) {
+        // TA FUNKCJA OTWIERA PRAWDZIWE GOOGLE Z WPISANĄ FRAZĄ
+        function searchInGoogle(rawQuery) {
             const query = rawQuery.trim();
             if (!query) return;
 
+            // Zapis do historii lokalnej
             historyData = historyData.filter(x => x !== query);
             historyData.unshift(query);
             if(historyData.length > 5) historyData.pop();
             renderHistory();
             try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
 
-            // Przełączanie widoków
-            document.getElementById('dashboard-view').style.display = 'none';
-            document.getElementById('results-view').style.display = 'block';
+            // Przekierowanie do prawdziwego Google w nowej karcie
+            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            window.open(googleUrl, '_blank');
 
-            const imagesRow = document.getElementById('dynamic-images-row');
-            const accordionBox = document.getElementById('dynamic-accordion-box');
-            const textResultsList = document.getElementById('dynamic-text-results');
-            const metadataContainer = document.getElementById('sidebar-metadata-container');
-
-            imagesRow.innerHTML = '';
-            accordionBox.innerHTML = '';
-            textResultsList.innerHTML = '';
-            metadataContainer.innerHTML = '';
-
-            const randomCount = Math.floor(Math.random() * 8500000) + 120000;
-            const randomTime = (Math.random() * 0.4 + 0.1).toFixed(2);
-            document.getElementById('search-meta-info').innerText = `Około ${randomCount.toLocaleString('pl-PL')} wyników (${randomTime} s) dla zapytania: ${query}`;
-
-            // 1. GENEROWANIE MINIATUR GRAFICZNYCH
-            const imgTemplates = [
-                { source: 'YouTube', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250' },
-                { source: 'Wikipedia', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=250' },
-                { source: 'Tenor', img: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=250' }
-            ];
-            imgTemplates.forEach(item => {
-                imagesRow.innerHTML += `
-                    <div class="google-image-card">
-                        <div class="google-img-box" style="background-image: url('${item.img}');"></div>
-                        <div class="google-img-text-box">
-                            <div class="google-img-title">${query} - Zbiór fotografii</div>
-                            <div class="google-img-source">🌐 ${item.source}</div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            // 2. SEKCJA AKORDEONU "WIĘCEJ PYTAŃ"
-            const questions = [
-                `Co to jest dokładnie ${query}?`,
-                `Jak poprawnie interpretować hasło: ${query}?`,
-                `Skąd pochodzi i jakie ma znaczenie ${query}?`
-            ];
-            questions.forEach(q => {
-                accordionBox.innerHTML += `<div class="accordion-row">${q}</div>`;
-            });
-
-            // 3. ORGANICZNE REZULTATY GOOGLE
-            const textDatabase = [
-                {
-                    title: `${query} – Najważniejsze informacje i aktualności w sieci`,
-                    url: `https://www.onet.pl › wiadomosci › szukaj?q=${encodeURIComponent(query)}`,
-                    snippet: `Wszystko na temat <b>${query}</b>. Śledź najnowsze doniesienia prasowe, komentarze niezależnych publicystów oraz opinie ekspertów z branży.`
-                },
-                {
-                    title: `${query} – Wikipedia, wolna encyklopedia internetowa`,
-                    url: `https://pl.wikipedia.org › wiki › ${encodeURIComponent(query)}`,
-                    snippet: `Artykuł omawia definicję pojęcia <b>${query}</b>, jego tło historyczne, najważniejsze ewolucje na przestrzeni ostatnich lat, a także powiązane zagadnienia.`
-                },
-                {
-                    title: `${query} - Oficjalne materiały wideo i poradniki na YouTube`,
-                    url: `https://www.youtube.com › watch › search_results=${encodeURIComponent(query)}`,
-                    snippet: `Oglądaj najnowsze produkcje, kursy wideo krok po kroku oraz recenzje powiązane bezpośrednio z tematyką <b>${query}</b> w najwyższej jakości.`
-                }
-            ];
-            textDatabase.forEach(item => {
-                textResultsList.innerHTML += `
-                    <div class="google-result-item">
-                        <div class="res-url-row">
-                            <span class="res-fav-mock">🌐</span>
-                            <span class="res-display-url">${item.url}</span>
-                        </div>
-                        <a href="#" class="res-title" onclick="event.preventDefault();">${item.title}</a>
-                        <div class="res-snippet">${item.snippet}</div>
-                    </div>
-                `;
-            });
-
-            // 4. PRAWA KARTA WIEDZY (KNOWLEDGE GRAPH CARD)
-            document.getElementById('sidebar-term').innerText = query.charAt(0).toUpperCase() + query.slice(1);
-            document.getElementById('sidebar-sub-title').innerText = `Zapytanie globalne · Wyszukiwarka Google`;
-            document.getElementById('sidebar-media-bg').style.backgroundImage = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400')";
-            document.getElementById('sidebar-media-duration').innerText = `${Math.floor(Math.random() * 4) + 1}:${Math.floor(Math.random() * 50) + 10}`;
-
-            const metadata = [
-                { label: 'Główny identyfikator', value: query },
-                { label: 'Typ indeksu', value: 'Dynamiczny rekord Google Core' },
-                { label: 'Bezpieczeństwo', value: 'Zweryfikowane bezpieczne połączenie' },
-                { label: 'Ostatnia aktualizacja bazy', value: 'Czerwiec 2026' }
-            ];
-            metadata.forEach(meta => {
-                metadataContainer.innerHTML += `
-                    <div class="sidebar-meta-row"><strong>${meta.label}:</strong> <span>${meta.value}</span></div>
-                `;
-            });
+            // Czyszczenie inputa po wyszukiwaniu
+            document.getElementById('search-in').value = '';
         }
 
-        function showDashboard() {
-            document.getElementById('results-view').style.display = 'none';
-            document.getElementById('dashboard-view').style.display = 'flex';
+        function refreshPage() {
             document.getElementById('search-in').value = '';
+            window.location.reload();
         }
 
         function renderHistory() {
@@ -262,7 +105,7 @@
             historyData.forEach((item, idx) => {
                 list.innerHTML += `
                     <div class="history-row">
-                        <span class="history-text" onclick="document.getElementById('search-in').value='${item}'; executeDynamicSearch('${item}')">🔍 ${item}</span>
+                        <span class="history-text" onclick="searchInGoogle('${item}')">🔍 ${item}</span>
                         <span class="history-del" onclick="deleteHistory(${idx})">×</span>
                     </div>
                 `;
