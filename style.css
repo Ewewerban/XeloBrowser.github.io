@@ -1,93 +1,426 @@
+/* GŁÓWNE RESETOWANIE I CZCIONKI */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Zmienne globalne dla motywu ciemnego paska */
-:root {
-    --bg-toolbar: #2f3136;
-    --bg-address: #202124;
-    --border-address: #5f6368;
-    --text-color: #e8eaed;
-    --btn-hover: rgba(255, 255, 255, 0.1);
+body {
+    font-family: Roboto, arial, sans-serif;
+    background-color: #202124;
+    color: #f1f3f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
 }
 
-/* Zmienne globalne dla motywu jasnego paska */
-[data-theme="light"] {
-    --bg-toolbar: #f1f3f4;
-    --bg-address: #ffffff;
-    --border-address: #dadce0;
-    --text-color: #3c4043;
-    --btn-hover: rgba(0, 0, 0, 0.05);
-}
-
-body, html {
-    width: 100%;
-    height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    overflow: hidden;
-    background-color: var(--bg-address);
-}
-
-/* Pasek narzędzi na samej górze */
-.toolbar {
+/* INTERFEJS GÓRNEGO PASKA PRZEGLĄDARKI */
+.top-bar {
     display: flex;
     align-items: center;
-    background-color: var(--bg-toolbar);
-    padding: 8px;
-    gap: 8px;
-    border-bottom: 1px solid rgba(0,0,0,0.2);
-    position: relative;
+    justify-content: space-between;
+    padding: 12px 24px;
+    background-color: #202124;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
     z-index: 10;
-    transition: background-color 0.3s;
 }
 
-/* Przyciski nawigacji i akcji */
-.btn {
-    background: none;
-    border: none;
-    color: var(--text-color);
-    font-size: 18px;
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     cursor: pointer;
-    width: 32px;
-    height: 32px;
+    user-select: none;
+}
+
+.brand-name-top {
+    font-weight: 500;
+    font-size: 15px;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.incognito-btn {
+    background: #303134;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e8eaed;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+.incognito-btn:hover {
+    background: #3c4043;
+}
+
+/* KONTENER ROBOCZY */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background-color: #202124;
+}
+
+/* ================= WIDOK PULPITU STARTOWEGO ================= */
+#dashboard-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    width: 100%;
+    padding-bottom: 50px;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.brand-mascot {
+    font-size: 55px;
+    user-select: none;
+}
+
+.brand h1 {
+    font-size: 38px;
+    font-weight: 500;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.search-area {
+    width: 100%;
+    max-width: 584px;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 13px 20px 13px 46px;
+    border-radius: 24px;
+    border: 1px solid #5f6368;
+    background-color: #202124;
+    color: white;
+    font-size: 16px;
+    outline: none;
+    transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.search-box input:focus {
+    background-color: #303134;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.4);
+    border-color: transparent;
+}
+
+.search-box::before {
+    content: "🔍";
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 15px;
+    opacity: 0.6;
+}
+
+/* KAFELKI ULUBIONYCH STRON */
+.shortcuts-grid {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+    max-width: 584px;
+}
+
+.tile-wrapper {
+    position: relative;
+    width: 74px;
+    text-align: center;
+}
+
+.tile {
+    text-decoration: none;
+    color: #bdc1c6;
+    font-size: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.tile-icon {
+    width: 48px;
+    height: 48px;
+    background-color: #303134;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s, color 0.3s;
+    font-size: 20px;
+    transition: background-color 0.2s;
+}
+.tile-wrapper:hover .tile-icon {
+    background-color: #3c4043;
 }
 
-.btn:hover {
-    background-color: var(--btn-hover);
+.tile-name-txt {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-/* Górny mini pasek adresu */
-.address-bar {
-    flex-grow: 1;
-    background-color: var(--bg-address);
-    border: 1px solid var(--border-address);
-    color: var(--text-color);
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.3s;
-}
-
-.address-bar:focus {
-    border-color: #8ab4f8;
-}
-
-/* Mała ikonka maskotki w lewym górnym rogu */
-.mascot {
-    font-size: 22px;
+.tile-delete-btn {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ea4335;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 9px;
     cursor: pointer;
-    user-select: none;
-    padding: 0 5px;
-    transition: transform 0.3s;
+    display: none;
+    z-index: 2;
 }
-.mascot:hover {
-    transform: scale(1.2) rotate(10deg);
+.tile-wrapper:hover .tile-delete-btn {
+    display: block;
+}
+
+/* SEKCOA HISTORII WYSZUKIWANIA */
+.history-box {
+    width: 100%;
+    max-width: 584px;
+    background-color: #303134;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 700;
+    color: #9aa0a6;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+}
+
+.history-clear {
+    cursor: pointer;
+    color: #fbbc05;
+}
+.history-clear:hover {
+    text-decoration: underline;
+}
+
+.history-items {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    padding: 8px 4px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+.history-row:last-child {
+    border-bottom: none;
+}
+
+.history-text {
+    cursor: pointer;
+    flex: 1;
+    color: #e8eaed;
+}
+.history-text:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.history-del {
+    cursor: pointer;
+    font-size: 11px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+}
+.history-del:hover {
+    opacity: 1;
+}
+
+
+/* ========================================================
+   WIDOK WYNIKÓW WYSZUKIWANIA (IDEALNE BIAŁE GOOGLE)
+   ======================================================== */
+#results-view {
+    display: none;
+    background-color: #ffffff;
+    color: #202124;
+    flex: 1;
+    width: 100%;
+}
+
+/* Pasek nawigacji pod oknem wyszukiwania */
+.google-nav-strip {
+    border-bottom: 1px solid #ebebeb;
+    padding: 0 160px;
+    display: flex;
+    gap: 20px;
+    height: 48px;
+    align-items: center;
+    font-size: 14px;
+    color: #5f6368;
+}
+
+.google-nav-item {
+    cursor: pointer;
+    padding-bottom: 11px;
+    margin-top: 11px;
+    border-bottom: 3px solid transparent;
+}
+.google-nav-item.active {
+    color: #1a73e8;
+    border-bottom-color: #1a73e8;
+    font-weight: 500;
+}
+
+/* Konstrukcja dwukolumnowej siatki */
+.google-results-container {
+    padding: 16px 160px 40px 160px;
+    display: flex;
+    gap: 64px;
+    max-width: 1280px;
+}
+
+.google-left-content {
+    flex: 1;
+    max-width: 652px;
+}
+
+.search-meta-info {
+    font-size: 14px;
+    color: #70757a;
+    margin-bottom: 24px;
+}
+
+/* STRUKTURA POJEDYNCZEGO REALNEGO WYNIKU */
+.google-result-item {
+    margin-bottom: 28px;
+    text-align: left;
+}
+
+.res-url-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.res-fav-mock {
+    font-size: 12px;
+}
+
+.res-display-url {
+    font-size: 12px;
+    color: #202124;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.res-title {
+    font-size: 20px;
+    color: #1a0dab;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+.res-title:hover {
+    text-decoration: underline;
+}
+
+.res-snippet {
+    font-size: 14px;
+    color: #4d5156;
+    line-height: 1.58;
+    word-wrap: break-word;
+}
+.res-snippet b {
+    color: #202124;
+    font-weight: 700;
+}
+
+/* PRAWY BOCZNY KNOWLEDGE PANEL */
+.google-right-sidebar {
+    width: 368px;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 16px;
+    height: fit-content;
+    background-color: #ffffff;
+}
+
+.sidebar-title-row h2 {
+    font-size: 24px;
+    font-weight: 400;
+    color: #202124;
+}
+
+.sidebar-subtitle {
+    font-size: 14px;
+    color: #70757a;
+    margin-bottom: 14px;
+}
+
+.sidebar-meta-row {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #202124;
+    line-height: 1.45;
+}
+.sidebar-meta-row strong {
+    font-weight: 600;
+}
+
+
+/* SELEKTOR PALETY W ROGU PULPITU */
+.picker-container {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    background-color: #303134;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.picker-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
 }
