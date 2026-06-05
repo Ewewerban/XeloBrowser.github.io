@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google & Xelo Browser</title>
+    <title>Xelo Browser</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body id="main-body">
@@ -22,7 +22,7 @@
                 <div class="brand-mascot-container">
                     <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Leopard" class="brand-mascot-img">
                 </div>
-                <h1>Google</h1>
+                <h1>Xelo Browser</h1>
             </div>
 
             <div class="search-area">
@@ -132,7 +132,7 @@
             renderTiles();
         };
 
-        // Naprawiona funkcja zmiany tła - aplikuje kolor globalnie na cały tag body
+        // Zmiana koloru aplikowana jest globalnie na element body
         function changeBg(hex) {
             document.getElementById('main-body').style.backgroundColor = hex;
             try { localStorage.setItem('x_bg', hex); } catch(e) {}
@@ -154,6 +154,7 @@
             renderHistory();
             try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
 
+            // Przełączanie widoków
             document.getElementById('dashboard-view').style.display = 'none';
             document.getElementById('results-view').style.display = 'block';
 
@@ -171,7 +172,7 @@
             const randomTime = (Math.random() * 0.4 + 0.1).toFixed(2);
             document.getElementById('search-meta-info').innerText = `Około ${randomCount.toLocaleString('pl-PL')} wyników (${randomTime} s) dla zapytania: ${query}`;
 
-            // 1. KAFELKI GRAFICZNE
+            // 1. GENEROWANIE MINIATUR GRAFICZNYCH
             const imgTemplates = [
                 { source: 'YouTube', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250' },
                 { source: 'Wikipedia', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=250' },
@@ -182,14 +183,14 @@
                     <div class="google-image-card">
                         <div class="google-img-box" style="background-image: url('${item.img}');"></div>
                         <div class="google-img-text-box">
-                            <div class="google-img-title">${query} - Archiwum fotograficzne</div>
+                            <div class="google-img-title">${query} - Zbiór fotografii</div>
                             <div class="google-img-source">🌐 ${item.source}</div>
                         </div>
                     </div>
                 `;
             });
 
-            // 2. SEKCJA "WIĘCEJ PYTAŃ"
+            // 2. SEKCJA AKORDEONU "WIĘCEJ PYTAŃ"
             const questions = [
                 `Co to jest dokładnie ${query}?`,
                 `Jak poprawnie interpretować hasło: ${query}?`,
@@ -199,7 +200,7 @@
                 accordionBox.innerHTML += `<div class="accordion-row">${q}</div>`;
             });
 
-            // 3. WYNIKI TEKSTOWE
+            // 3. ORGANICZNE REZULTATY GOOGLE
             const textDatabase = [
                 {
                     title: `${query} – Najważniejsze informacje i aktualności w sieci`,
@@ -230,7 +231,7 @@
                 `;
             });
 
-            // 4. AKTUALIZACJA KNOWLEDGE PANELU Z PRAWEJ
+            // 4. PRAWA KARTA WIEDZY (KNOWLEDGE GRAPH CARD)
             document.getElementById('sidebar-term').innerText = query.charAt(0).toUpperCase() + query.slice(1);
             document.getElementById('sidebar-sub-title').innerText = `Zapytanie globalne · Wyszukiwarka Google`;
             document.getElementById('sidebar-media-bg').style.backgroundImage = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400')";
@@ -238,7 +239,7 @@
 
             const metadata = [
                 { label: 'Główny identyfikator', value: query },
-                { label: 'Typ indeksu', value: 'Dynamiczny rekord tekstowo-graficzny' },
+                { label: 'Typ indeksu', value: 'Dynamiczny rekord Google Core' },
                 { label: 'Bezpieczeństwo', value: 'Zweryfikowane bezpieczne połączenie' },
                 { label: 'Ostatnia aktualizacja bazy', value: 'Czerwiec 2026' }
             ];
