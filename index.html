@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Xelo Browser</title>
+    <title>Google & Xelo Browser</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body id="main-body">
 
     <div class="top-bar">
         <div class="left-controls" onclick="showDashboard()">
@@ -15,14 +15,14 @@
         <button class="incognito-btn">Tryb Incognito</button>
     </div>
 
-    <div class="main-content" id="bg-layer">
+    <div class="main-content">
         
         <div id="dashboard-view">
             <div class="brand">
                 <div class="brand-mascot-container">
                     <img src="https://openmoji.org/data/color/svg/1F406.svg" alt="Leopard" class="brand-mascot-img">
                 </div>
-                <h1>XeloBrowser</h1>
+                <h1>Google</h1>
             </div>
 
             <div class="search-area">
@@ -64,10 +64,10 @@
                     <div class="google-images-row" id="dynamic-images-row"></div>
                     <button class="google-more-images-btn">Pokaż więcej obrazów ▾</button>
 
-                    <div class="google-section-title" style="font-size: 18px; margin-top: 16px; margin-bottom: 8px;">Więcej pytań</div>
+                    <div class="google-section-title google-title-mid">Więcej pytań</div>
                     <div class="google-accordion-box" id="dynamic-accordion-box"></div>
 
-                    <div class="google-section-title" style="font-size: 18px; margin-top: 24px; margin-bottom: 12px;">Wyniki z sieci</div>
+                    <div class="google-section-title google-title-bottom">Wyniki z sieci</div>
                     <div id="dynamic-text-results"></div>
                 </div>
 
@@ -88,19 +88,19 @@
                     <div class="listen-header">Posłuchaj / Znajdź w</div>
                     <div class="listen-grid">
                         <div class="listen-pill">
-                            <div class="listen-icon-mock" style="color:#ff0000;">📺</div>
+                            <div class="listen-icon-mock icon-yt">📺</div>
                             <span>YouTube</span>
                         </div>
                         <div class="listen-pill">
-                            <div class="listen-icon-mock" style="color:#1DB954;">🎵</div>
+                            <div class="listen-icon-mock icon-spotify">🎵</div>
                             <span>Spotify</span>
                         </div>
                         <div class="listen-pill">
-                            <div class="listen-icon-mock" style="color:#fc3c44;">🍎</div>
+                            <div class="listen-icon-mock icon-apple">🍎</div>
                             <span>Apple Music</span>
                         </div>
                         <div class="listen-pill">
-                            <div class="listen-icon-mock" style="color:#a255ff;">🎧</div>
+                            <div class="listen-icon-mock icon-deezer">🎧</div>
                             <span>Deezer</span>
                         </div>
                     </div>
@@ -132,8 +132,9 @@
             renderTiles();
         };
 
+        // Naprawiona funkcja zmiany tła - aplikuje kolor globalnie na cały tag body
         function changeBg(hex) {
-            document.getElementById('bg-layer').style.backgroundColor = hex;
+            document.getElementById('main-body').style.backgroundColor = hex;
             try { localStorage.setItem('x_bg', hex); } catch(e) {}
         }
 
@@ -143,27 +144,19 @@
             }
         }
 
-        /* AUTENTYCZNY SILNIK GENEROWANIA WYNIKÓW
-          Buduje całą strukturę strony na podstawie wpisanej frazy użytkownika,
-          zapewniając naturalne i logiczne opisy.
-        */
         function executeDynamicSearch(rawQuery) {
             const query = rawQuery.trim();
             if (!query) return;
 
-            // Aktualizacja i zapis historii użytkownika
             historyData = historyData.filter(x => x !== query);
             historyData.unshift(query);
             if(historyData.length > 5) historyData.pop();
             renderHistory();
             try { localStorage.setItem('x_hist', JSON.stringify(historyData)); } catch(e) {}
 
-            // Przełączanie widoków pulpitu na białą kartę wyników Google
             document.getElementById('dashboard-view').style.display = 'none';
-            document.getElementById('picker-ui').style.display = 'none';
             document.getElementById('results-view').style.display = 'block';
 
-            // Czyszczenie i przygotowanie kontenerów HTML
             const imagesRow = document.getElementById('dynamic-images-row');
             const accordionBox = document.getElementById('dynamic-accordion-box');
             const textResultsList = document.getElementById('dynamic-text-results');
@@ -174,62 +167,54 @@
             textResultsList.innerHTML = '';
             metadataContainer.innerHTML = '';
 
-            // Wyświetlanie statystyk u góry strony
             const randomCount = Math.floor(Math.random() * 8500000) + 120000;
             const randomTime = (Math.random() * 0.4 + 0.1).toFixed(2);
             document.getElementById('search-meta-info').innerText = `Około ${randomCount.toLocaleString('pl-PL')} wyników (${randomTime} s) dla zapytania: ${query}`;
 
-            // 1. GENEROWANIE KAFLI GRAFICZNYCH
+            // 1. KAFELKI GRAFICZNE
             const imgTemplates = [
                 { source: 'YouTube', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=250' },
                 { source: 'Wikipedia', img: 'https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=250' },
                 { source: 'Tenor', img: 'https://images.unsplash.com/photo-1614741118887-7a4ee193a5fa?w=250' }
             ];
-            imgTemplates.forEach((item, index) => {
+            imgTemplates.forEach(item => {
                 imagesRow.innerHTML += `
                     <div class="google-image-card">
                         <div class="google-img-box" style="background-image: url('${item.img}');"></div>
                         <div class="google-img-text-box">
-                            <div class="google-img-title">${query} - Archiwum fotograficzne i medialne</div>
+                            <div class="google-img-title">${query} - Archiwum fotograficzne</div>
                             <div class="google-img-source">🌐 ${item.source}</div>
                         </div>
                     </div>
                 `;
             });
 
-            // 2. GENEROWANIE SEKCJI "WIĘCEJ PYTAŃ"
+            // 2. SEKCJA "WIĘCEJ PYTAŃ"
             const questions = [
                 `Co to jest dokładnie ${query}?`,
                 `Jak poprawnie interpretować hasło: ${query}?`,
                 `Skąd pochodzi i jakie ma znaczenie ${query}?`
             ];
             questions.forEach(q => {
-                accordionBox.innerHTML += `
-                    <div class="accordion-row">${q}</div>
-                `;
+                accordionBox.innerHTML += `<div class="accordion-row">${q}</div>`;
             });
 
-            // 3. GENEROWANIE GŁÓWNYCH REZULTATÓW TEKSTOWYCH
+            // 3. WYNIKI TEKSTOWE
             const textDatabase = [
                 {
-                    title: `${query} – Najważniejsze informacje, wiadomości i aktualności`,
+                    title: `${query} – Najważniejsze informacje i aktualności w sieci`,
                     url: `https://www.onet.pl › wiadomosci › szukaj?q=${encodeURIComponent(query)}`,
-                    snippet: `Wszystko na temat <b>${query}</b>. Śledź najnowsze doniesienia prasowe, komentarze niezależnych publicystów, raporty oraz opinie ekspertów z branży.`
+                    snippet: `Wszystko na temat <b>${query}</b>. Śledź najnowsze doniesienia prasowe, komentarze niezależnych publicystów oraz opinie ekspertów z branży.`
                 },
                 {
-                    title: `${query} – Encyklopedia Wikipedia, wolny słownik online`,
+                    title: `${query} – Wikipedia, wolna encyklopedia internetowa`,
                     url: `https://pl.wikipedia.org › wiki › ${encodeURIComponent(query)}`,
-                    snippet: `Artykuł omawia definicję pojęcia <b>${query}</b>, jego tło historyczne, najważniejsze ewolucje na przestrzeni ostatnich lat, a także powiązane zagadnienia systemowe.`
+                    snippet: `Artykuł omawia definicję pojęcia <b>${query}</b>, jego tło historyczne, najważniejsze ewolucje na przestrzeni ostatnich lat, a także powiązane zagadnienia.`
                 },
                 {
                     title: `${query} - Oficjalne materiały wideo i poradniki na YouTube`,
                     url: `https://www.youtube.com › watch › search_results=${encodeURIComponent(query)}`,
-                    snippet: `Oglądaj najnowsze produkcje, kursy wideo krok po kroku oraz recenzje powiązane bezpośrednio z tematyką <b>${query}</b> w najwyższej jakości HD.`
-                },
-                {
-                    title: `Jak skutecznie wykorzystać ${query} w codziennej pracy?`,
-                    url: `https://www.poradnik-sieciowy.pl › technologie › ${encodeURIComponent(query)}`,
-                    snippet: `Kompleksowy poradnik dedykowany dla osób rozpoczynających naukę o <b>${query}</b>. Sprawdź najlepsze praktyki, najpopularniejsze błędy i gotowe rozwiązania.`
+                    snippet: `Oglądaj najnowsze produkcje, kursy wideo krok po kroku oraz recenzje powiązane bezpośrednio z tematyką <b>${query}</b> w najwyższej jakości.`
                 }
             ];
             textDatabase.forEach(item => {
@@ -245,17 +230,17 @@
                 `;
             });
 
-            // 4. AKTUALIZACJA BOCZNEGO PANELU WIEDZY (KNOWLEDGE PANEL)
+            // 4. AKTUALIZACJA KNOWLEDGE PANELU Z PRAWEJ
             document.getElementById('sidebar-term').innerText = query.charAt(0).toUpperCase() + query.slice(1);
-            document.getElementById('sidebar-sub-title').innerText = `Zapytanie globalne · Indeks sieci Xelo`;
+            document.getElementById('sidebar-sub-title').innerText = `Zapytanie globalne · Wyszukiwarka Google`;
             document.getElementById('sidebar-media-bg').style.backgroundImage = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400')";
             document.getElementById('sidebar-media-duration').innerText = `${Math.floor(Math.random() * 4) + 1}:${Math.floor(Math.random() * 50) + 10}`;
 
             const metadata = [
                 { label: 'Główny identyfikator', value: query },
                 { label: 'Typ indeksu', value: 'Dynamiczny rekord tekstowo-graficzny' },
-                { label: 'Bezpieczeństwo', value: 'Zweryfikowane przez Xelo Browser Core' },
-                { label: 'Ostatnie logowanie bazy', value: 'Czerwiec 2026' }
+                { label: 'Bezpieczeństwo', value: 'Zweryfikowane bezpieczne połączenie' },
+                { label: 'Ostatnia aktualizacja bazy', value: 'Czerwiec 2026' }
             ];
             metadata.forEach(meta => {
                 metadataContainer.innerHTML += `
@@ -267,7 +252,6 @@
         function showDashboard() {
             document.getElementById('results-view').style.display = 'none';
             document.getElementById('dashboard-view').style.display = 'flex';
-            document.getElementById('picker-ui').style.display = 'flex';
             document.getElementById('search-in').value = '';
         }
 
